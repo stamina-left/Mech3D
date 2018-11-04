@@ -14,7 +14,7 @@ public static class ScriptableObjectUtility
         string path = AssetDatabase.GetAssetPath(Selection.activeObject);
         if (path == "")
         {
-            path = "Assets";
+            path = "Assets"; 
         }
         else if (Path.GetExtension(path) != "")
         {
