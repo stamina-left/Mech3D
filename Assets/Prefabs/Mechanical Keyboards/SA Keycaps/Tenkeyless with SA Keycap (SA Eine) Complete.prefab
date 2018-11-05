@@ -3380,7 +3380,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4000777965853426
 Transform:
   m_ObjectHideFlags: 1
@@ -15771,7 +15771,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91d7f583d09346440adbffc21efcd829, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectNameText: {fileID: 0}
+  loadProjectText: {fileID: 0}
   casesMaterial: 
+  mechanicalKeyboard: {fileID: 0}
 --- !u!122 &122001963696490108
 Halo:
   m_ObjectHideFlags: 1

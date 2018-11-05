@@ -220,7 +220,7 @@ public class HideObject : MonoBehaviour
     {
         canvasProperties.GetComponent<CanvasGroup>().alpha = 0f;
         canvasProperties.GetComponent<CanvasGroup>().blocksRaycasts = false;
-        canvasSwitchesSelection.GetComponent<CanvasGroup>().alpha = 0f;
+        canvasSwitchesSelection.GetComponent<CanvasGroup>().alpha = 1f;
         canvasSwitchesSelection.gameObject.GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
 
