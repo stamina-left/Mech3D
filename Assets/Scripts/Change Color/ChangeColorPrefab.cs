@@ -7,7 +7,7 @@ public class ChangeColorPrefab : MonoBehaviour {
 
     // Use this for initialization
     public GameObject buttonColorPrefab, textCPTitle;
-    public Button buttonGMK, buttonSPABS, buttonSPPBT, buttonWASD;
+    public Button buttonGMK, buttonSPABS, buttonSPPBT, buttonWASD, buttonReverseColor;
     public GameObject panelColorPalette, imageColorBrand;
     public Canvas canvasColorPalette, canvasColorPaletteSelection;
     private Material[] cpGMKUniqey, cpSPABS, cpSPPBT, cpWASD;
@@ -31,11 +31,12 @@ public class ChangeColorPrefab : MonoBehaviour {
         buttonSPABS.onClick.AddListener(delegate { callCP(positionLR, cpSPABS, textSPABS); });
         buttonSPPBT.onClick.AddListener(delegate { callCP(positionLR, cpSPPBT, textSPPBT); });
         buttonWASD.onClick.AddListener(delegate { callCP(positionLR, cpWASD, textWASD); });
+        buttonReverseColor.onClick.AddListener(reverseColor);
     }
 
     // Update is called once per frame
     void Update () {
-        if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKey(KeyCode.A))
+        if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKey(KeyCode.A)) // TIDAK ERROR
         {
             Debug.Log("Control and Type A is clicked.");
             
@@ -65,15 +66,15 @@ public class ChangeColorPrefab : MonoBehaviour {
                 int switchesCount = GameObject.Find("Switches").transform.childCount;
                 for (int i = 0; i < switchesCount; i++)
                 {
-                    //Behaviour eachHalosSwitches = (Behaviour)GameObject.Find("Switches").transform.GetChild(i).GetComponent("Halo");
+                    Behaviour eachHalosSwitches = (Behaviour)GameObject.Find("Switches").transform.GetChild(i).GetComponent("Halo");
                     if (GameObject.Find("Switches").transform.GetChild(i).tag == "SwitchesSelected")
                     {
-                        //eachHalosSwitches.enabled = false;
+                        eachHalosSwitches.enabled = false;
                         GameObject.Find("Switches").transform.GetChild(i).tag = "Switches";
                     }
                     else if (GameObject.Find("Switches").transform.GetChild(i).tag == "Switches")
                     {
-                        //eachHalosSwitches.enabled = true;
+                        eachHalosSwitches.enabled = true;
                         GameObject.Find("Switches").transform.GetChild(i).tag = "SwitchesSelected";
                     }
                 }
@@ -93,113 +94,170 @@ public class ChangeColorPrefab : MonoBehaviour {
                 }
             }
         }
-        else if ((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) && Input.GetMouseButtonDown(0))
+        else if ((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) && Input.GetMouseButtonDown(0)) // TIDAK ERROR
         {
             //
             Debug.Log("Left mouse button and control button is clicked.");
 
             RaycastHit hitInfo = new RaycastHit();
             bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
-            if (hit)
+            //if (hit)
+            //{
+            //    Debug.Log(hitInfo.transform.tag);
+            //    Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
+            //    if (hitInfo.transform.tag == "Keycaps")
+            //    {
+            //        Debug.Log("You just clicked " + hitInfo.transform.name);
+                    
+            //        //if (hitInfo.transform.gameObject.tag == "Keycaps")
+            //        //{
+            //            hitInfo.transform.gameObject.tag = "KeycapsSelected";
+            //            hitHalo.GetType().GetProperty("enabled").SetValue(hitHalo, true, null);
+            //        //}
+            //        //else if (hitInfo.transform.gameObject.tag == "KeycapsSelected")
+            //        //{
+            //        //    hitInfo.transform.gameObject.tag = "Keycaps";
+            //        //    hitHalo.GetType().GetProperty("enabled").SetValue(hitHalo, false, null);
+            //        //}
+            //    }
+            //    else if (hitInfo.transform.tag == "KeycapsSeleted")
+            //    {
+            //        Debug.Log("You just clicked " + hitInfo.transform.name);
+
+            //        hitInfo.transform.gameObject.tag = "Keycaps";
+            //        hitHalo.GetType().GetProperty("enabled").SetValue(hitHalo, false, null);
+            //    }
+
+            //    // ERROR: Click di objek yang sama, masuk ke sini
+            //    //else if (hitInfo.transform.gameObject.tag != "Keycaps" || hitInfo.transform.gameObject.tag != "KeycapsSelected")
+            //    //{
+            //    //    Debug.Log("You just clicked another object. It's a " + hitInfo.transform.gameObject.tag);
+            //    //}
+            //}
+            if (hit && hitInfo.transform.tag == "Keycaps")
             {
-                if (hitInfo.transform.gameObject.tag == "Keycaps")
-                {
-                    Debug.Log("You just clicked " + hitInfo.transform.name);
-                    //Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
-                    if (hitInfo.transform.gameObject.tag == "Keycaps")
-                    {
-                        hitInfo.transform.gameObject.tag = "KeycapsSelected";
-                        //hitHalo.enabled = true;
-                    }
-                    else if (hitInfo.transform.gameObject.tag == "KeycapsSelected")
-                    {
-                        hitInfo.transform.gameObject.tag = "Keycaps";
-                        //hitHalo.enabled = false;
-                    }
-                }
-                else
-                {
-                    Debug.Log("You just clicked another object. It's a " + hitInfo.transform.gameObject.name);
-                }
+                Debug.Log(hitInfo.transform.tag);
+                Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
+                hitInfo.transform.tag = "KeycapsSelected";
+                hitHalo.GetType().GetProperty("enabled").SetValue(hitHalo, true, null);
+            }
+            else if (hit && hitInfo.transform.tag == "KeycapsSelected")
+            {
+                Debug.Log(hitInfo.transform.tag);
+                Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
+                hitInfo.transform.tag = "Keycaps";
+                hitHalo.GetType().GetProperty("enabled").SetValue(hitHalo, false, null);
             }
             else
             {
                 Debug.Log("You didn't touch anything.");
             }
         }
-        else if (Input.GetMouseButtonDown(0))
+        else if (Input.GetMouseButtonDown(0)) // TIDAK ERROR
         {
             Debug.Log("Left mouse button is clicked.");
 
             RaycastHit hitInfo = new RaycastHit();
             bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
-            if (hit)
+            //if (hit)
+            //{
+            //    if (hitInfo.transform.gameObject.tag == "Keycaps" || hitInfo.transform.gameObject.tag == "KeycapsSelected")
+            //    {
+            //        GameObject[] otherKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
+            //        foreach (GameObject otherKeycap in otherKeycaps)
+            //        {
+            //            //Behaviour hitOtherHalo = (Behaviour)otherKeycap.GetComponent("Halo");
+            //            //hitOtherHalo.enabled = false;
+            //            otherKeycap.tag = "Keycaps";
+            //        }
+
+            //        GameObject[] otherSelectedKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+            //        foreach (GameObject selectedKeycaps in otherSelectedKeycaps)
+            //        {
+            //            selectedKeycaps.tag = "Keycaps";
+            //        }
+
+            //        Debug.Log("You just clicked " + hitInfo.transform.name);
+            //        //Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
+            //        if (hitInfo.transform.gameObject.tag == "Keycaps")
+            //        {
+            //            hitInfo.transform.gameObject.tag = "KeycapsSelected";
+            //            //hitHalo.enabled = true;
+            //        }
+            //        else if (hitInfo.transform.gameObject.tag == "KeycapsSelected")
+            //        {
+            //            hitInfo.transform.gameObject.tag = "Keycaps";
+            //            //hitHalo.enabled = false;
+            //        }
+            //    }
+            //    else if (hitInfo.transform.gameObject.tag == "Switches" || hitInfo.transform.gameObject.tag == "SwitchesSelected")
+            //    {
+            //        GameObject[] otherSwitches = GameObject.FindGameObjectsWithTag("Switches");
+            //        foreach (GameObject otherSwitch in otherSwitches)
+            //        {
+            //            otherSwitch.tag = "Switches";
+            //        }
+
+            //        GameObject[] otherSelectedSwitches = GameObject.FindGameObjectsWithTag("SwitchesSelected");
+            //        foreach (GameObject selectedSwitches in otherSelectedSwitches)
+            //        {
+            //            selectedSwitches.tag = "Switches";
+            //        }
+
+            //        Debug.Log("You just clicked a switch.");
+
+            //        if (hitInfo.transform.gameObject.tag == "Switches")
+            //        {
+            //            hitInfo.transform.gameObject.tag = "SwitchesSelected";
+            //        }
+            //        else if (hitInfo.transform.gameObject.tag == "SwitchesSelected")
+            //        {
+            //            hitInfo.transform.gameObject.tag = "Switches";
+            //        }
+            //    }
+            //    else if (hitInfo.transform.gameObject.tag == "Case" || hitInfo.transform.gameObject.tag == "CaseSelected")
+            //    {
+            //        if (hitInfo.transform.gameObject.tag == "Case")
+            //            hitInfo.transform.gameObject.tag = "CaseSelected";
+            //        else if (hitInfo.transform.gameObject.tag == "CaseSelected")
+            //            hitInfo.transform.gameObject.tag = "Case";
+            //    }
+            //    else
+            //    {
+            //        Debug.Log("You just clicked another object. It's a " + hitInfo.transform.gameObject.name);
+            //    }
+            //}
+            if (hit && hitInfo.transform.tag == "Keycaps")
             {
-                if (hitInfo.transform.gameObject.tag == "Keycaps" || hitInfo.transform.gameObject.tag == "KeycapsSelected")
+                GameObject[] otherKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+                foreach (GameObject otherKeycap in otherKeycaps)
                 {
-                    GameObject[] otherKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
-                    foreach (GameObject otherKeycap in otherKeycaps)
-                    {
-                        //Behaviour hitOtherHalo = (Behaviour)otherKeycap.GetComponent("Halo");
-                        //hitOtherHalo.enabled = false;
-                        otherKeycap.tag = "Keycaps";
-                    }
-
-                    GameObject[] otherSelectedKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
-                    foreach (GameObject selectedKeycaps in otherSelectedKeycaps)
-                    {
-                        selectedKeycaps.tag = "Keycaps";
-                    }
-
-                    Debug.Log("You just clicked " + hitInfo.transform.name);
-                    //Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
-                    if (hitInfo.transform.gameObject.tag == "Keycaps")
-                    {
-                        hitInfo.transform.gameObject.tag = "KeycapsSelected";
-                        //hitHalo.enabled = true;
-                    }
-                    else if (hitInfo.transform.gameObject.tag == "KeycapsSelected")
-                    {
-                        hitInfo.transform.gameObject.tag = "Keycaps";
-                        //hitHalo.enabled = false;
-                    }
+                    Debug.Log("Keycaps lain yang terpilih, sudah tidak terpilih lagi.");
+                    Behaviour otherHalo = (Behaviour)otherKeycap.GetComponent("Halo");
+                    otherHalo.enabled = false;
+                    otherKeycap.tag = "Keycaps";
                 }
-                else if (hitInfo.transform.gameObject.tag == "Switches" || hitInfo.transform.gameObject.tag == "SwitchesSelected")
+
+                Debug.Log("You just clicked " + hitInfo.transform.name);
+                Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
+                hitInfo.transform.tag = "KeycapsSelected";
+                hitHalo.GetType().GetProperty("enabled").SetValue(hitHalo, true, null);
+            }
+            else if (hit && hitInfo.transform.tag == "KeycapsSelected")
+            {
+                GameObject[] otherKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+                foreach (GameObject otherKeycap in otherKeycaps)
                 {
-                    GameObject[] otherSwitches = GameObject.FindGameObjectsWithTag("Switches");
-                    foreach (GameObject otherSwitch in otherSwitches)
-                    {
-                        otherSwitch.tag = "Switches";
-                    }
-
-                    GameObject[] otherSelectedSwitches = GameObject.FindGameObjectsWithTag("SwitchesSelected");
-                    foreach (GameObject selectedSwitches in otherSelectedSwitches)
-                    {
-                        selectedSwitches.tag = "Switches";
-                    }
-
-                    Debug.Log("You just clicked a switch.");
-
-                    if (hitInfo.transform.gameObject.tag == "Switches")
-                    {
-                        hitInfo.transform.gameObject.tag = "SwitchesSelected";
-                    }
-                    else if (hitInfo.transform.gameObject.tag == "SwitchesSelected")
-                    {
-                        hitInfo.transform.gameObject.tag = "Switches";
-                    }
+                    Debug.Log("Keycaps lain yang terpilih, sudah tidak terpilih lagi.");
+                    Behaviour otherHalo = (Behaviour)otherKeycap.GetComponent("Halo");
+                    otherHalo.enabled = false;
+                    otherKeycap.tag = "Keycaps";
                 }
-                else if (hitInfo.transform.gameObject.tag == "Case" || hitInfo.transform.gameObject.tag == "CaseSelected")
-                {
-                    if (hitInfo.transform.gameObject.tag == "Case")
-                        hitInfo.transform.gameObject.tag = "CaseSelected";
-                    else if (hitInfo.transform.gameObject.tag == "CaseSelected")
-                        hitInfo.transform.gameObject.tag = "Case";
-                }
-                else
-                {
-                    Debug.Log("You just clicked another object. It's a " + hitInfo.transform.gameObject.name);
-                }
+
+                Debug.Log("You just clicked " + hitInfo.transform.name);
+                Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
+                hitInfo.transform.tag = "Keycaps";
+                hitHalo.GetType().GetProperty("enabled").SetValue(hitHalo, false, null);
             }
             else if (!hit)
             {
@@ -252,6 +310,20 @@ public class ChangeColorPrefab : MonoBehaviour {
                     buttonPosition.x = 0;
                 }
             }
+        }
+    }
+
+    void reverseColor()
+    {
+        GameObject[] allKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+        Color materialOne, materialTwo;
+        foreach (GameObject eachKeycap in allKeycaps)
+        {
+            materialOne = eachKeycap.GetComponent<MeshRenderer>().materials[0].color; // outer
+            materialTwo = eachKeycap.GetComponent<MeshRenderer>().materials[1].color; // font
+
+            eachKeycap.GetComponent<MeshRenderer>().materials[0].color = materialTwo;
+            eachKeycap.GetComponent<MeshRenderer>().materials[1].color = materialOne;
         }
     }
 
