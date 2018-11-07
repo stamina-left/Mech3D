@@ -3471,7 +3471,7 @@ GameObject:
   - component: {fileID: 95623633152935420}
   - component: {fileID: 114504456971474470}
   m_Layer: 0
-  m_Name: Keyboard Spawn
+  m_Name: Fullsize with SA Keycap (SA Eine) Complete
   m_TagString: MechanicalKeyboards
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
