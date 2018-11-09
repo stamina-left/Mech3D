@@ -36,6 +36,8 @@ public class MechKeyPrefab : MonoBehaviour {
         buttonFullsize.interactable = false;
         buttonTKL.interactable = true;
         button60.interactable = true;
+        prefabFullsize.transform.GetChild(1).gameObject.SetActive(true); // set Cherry Profile as Active
+        prefabFullsize.transform.GetChild(2).gameObject.SetActive(false); // set SA Profile as Not Active
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
         GameObject.Find("Canvas").transform.GetChild(0).gameObject.SetActive(true);
@@ -49,6 +51,8 @@ public class MechKeyPrefab : MonoBehaviour {
         buttonFullsize.interactable = true;
         buttonTKL.interactable = false;
         button60.interactable = true;
+        prefabTKL.transform.GetChild(1).gameObject.SetActive(true); // set Cherry Profile as Active
+        prefabTKL.transform.GetChild(2).gameObject.SetActive(false); // set SA Profile as Not Active
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
         GameObject.Find("Canvas").transform.GetChild(0).gameObject.SetActive(true);
@@ -62,6 +66,8 @@ public class MechKeyPrefab : MonoBehaviour {
         buttonFullsize.interactable = true;
         buttonTKL.interactable = true;
         button60.interactable = false;
+        prefab60.transform.GetChild(1).gameObject.SetActive(true); // set Cherry Profile as Active
+        prefab60.transform.GetChild(2).gameObject.SetActive(false); // set SA Profile as Not Active
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
         GameObject.Find("Canvas").transform.GetChild(0).gameObject.SetActive(true);

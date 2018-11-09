@@ -36,29 +36,42 @@ public class ChangeColorPrefab : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKey(KeyCode.A)) // TIDAK ERROR
+        if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKey(KeyCode.A)) // ON PROGRESS
         {
             Debug.Log("Control and Type A is clicked.");
             
-            if (GameObject.Find("Keycaps").activeSelf) // if keycaps aren't hiding.
+            //if (GameObject.Find("Keycaps").activeSelf) // if keycaps aren't hiding.
+            if (GameObject.FindGameObjectsWithTag("Keycaps") != null) // if keycaps aren't hiding
             {
-                int keycapsCount = GameObject.Find("Keycaps").transform.childCount;
-                for (int i = 0; i < keycapsCount; i++)
+                //int keycapsCount = GameObject.Find("Keycaps").transform.childCount;
+                GameObject[] keycapsTarget = GameObject.FindGameObjectsWithTag("Keycaps");
+                //for (int i = 0; i < keycapsCount; i++)
+                for (int i = 0; i < keycapsTarget.Length; i++)
                 {
                     //Debug.Log("Selected " + GameObject.Find("Keycaps").transform.GetChild(i).name);
-                    Behaviour eachHalosKeycaps = (Behaviour)GameObject.Find("Keycaps").transform.GetChild(i).GetComponent("Halo");
+                    //Behaviour eachHalosKeycaps = (Behaviour)GameObject.Find("Keycaps").transform.GetChild(i).GetComponent("Halo");
+                    Behaviour eachHalosKeycaps = (Behaviour)keycapsTarget[i].GetComponent("Halo");
                     //Component eachHalosKeycaps = GameObject.Find("Keycaps").transform.GetChild(i).GetComponent("Halo");
-                    if (GameObject.Find("Keycaps").transform.GetChild(i).tag == "Keycaps")
+                    //if (GameObject.Find("Keycaps").transform.GetChild(i).tag == "Keycaps")
+                    //{
+                    //    eachHalosKeycaps.GetType().GetProperty("enabled").SetValue(eachHalosKeycaps, true, null);
+                    //    GameObject.Find("Keycaps").transform.GetChild(i).tag = "KeycapsSelected";
+                    //}
+                    //else if (GameObject.Find("Keycaps").transform.GetChild(i).tag == "KeycapsSelected")
+                    //{
+                    //    eachHalosKeycaps.GetType().GetProperty("enabled").SetValue(eachHalosKeycaps, false, null);
+                    //    GameObject.Find("Keycaps").transform.GetChild(i).tag = "Keycaps";
+                    //}
+                    if (keycapsTarget[i].tag == "Keycaps")
                     {
                         eachHalosKeycaps.GetType().GetProperty("enabled").SetValue(eachHalosKeycaps, true, null);
-                        GameObject.Find("Keycaps").transform.GetChild(i).tag = "KeycapsSelected";
+                        keycapsTarget[i].tag = "KeycapsSelected";
                     }
-                    else if (GameObject.Find("Keycaps").transform.GetChild(i).tag == "KeycapsSelected")
+                    else if (keycapsTarget[i].tag == "KeycapsSelected")
                     {
                         eachHalosKeycaps.GetType().GetProperty("enabled").SetValue(eachHalosKeycaps, false, null);
-                        GameObject.Find("Keycaps").transform.GetChild(i).tag = "Keycaps";
+                        keycapsTarget[i].tag = "Keycaps";
                     }
-
                 }
             }
             if (GameObject.Find("Switches").activeSelf) // if switches aren't hiding.
@@ -94,7 +107,7 @@ public class ChangeColorPrefab : MonoBehaviour {
                 }
             }
         }
-        else if ((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) && Input.GetMouseButtonDown(0)) // TIDAK ERROR
+        else if ((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) && Input.GetMouseButtonDown(0)) // ON PROGRESS
         {
             //
             Debug.Log("Left mouse button and control button is clicked.");
@@ -153,7 +166,7 @@ public class ChangeColorPrefab : MonoBehaviour {
                 Debug.Log("You didn't touch anything.");
             }
         }
-        else if (Input.GetMouseButtonDown(0)) // TIDAK ERROR
+        else if (Input.GetMouseButtonDown(0)) // ON PROGRESS
         {
             Debug.Log("Left mouse button is clicked.");
 

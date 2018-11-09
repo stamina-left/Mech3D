@@ -5,9 +5,8 @@ using UnityEngine.UI;
 
 public class HideObject : MonoBehaviour
 {
-    public Canvas canvasFile, canvasCreate, canvasProperties, canvasColorPaletteSelection, canvasColorPalette, canvasSwitchesSelection, 
-        canvasSaveLoadMenu;
-    public Button buttonFileProject, buttonSaveProject, buttonHideKeycaps, buttonHideSwitches, buttonChangeKeycapsColor, buttonChangeSwitches,
+    public Canvas canvasFile, canvasCreate, canvasProperties, canvasColorPaletteSelection, canvasColorPalette, canvasSwitchesSelection;
+    public Button buttonFileProject, buttonChangeProfileKeycaps, buttonSaveProject, buttonHideKeycaps, buttonHideSwitches, buttonChangeKeycapsColor, buttonChangeSwitches,
         buttonCreate, buttonProperties, buttonCloseFile, buttonCloseCreate, buttonCloseProperties, buttonCloseChangeKeycapsColor,
         buttonCloseColorPalette, buttonCloseChangeSwitches;
     private GameObject mechanicalKeyboards;
@@ -36,8 +35,8 @@ public class HideObject : MonoBehaviour
         canvasSwitchesSelection.GetComponent<CanvasGroup>().alpha = 0f;
         canvasSwitchesSelection.GetComponent<CanvasGroup>().blocksRaycasts = false;
 
-        canvasSaveLoadMenu.GetComponent<CanvasGroup>().alpha = 0f;
-        canvasSaveLoadMenu.GetComponent<CanvasGroup>().blocksRaycasts = false;
+        //canvasSaveLoadMenu.GetComponent<CanvasGroup>().alpha = 0f;
+        //canvasSaveLoadMenu.GetComponent<CanvasGroup>().blocksRaycasts = false;
 
         // After hide some object, add listener to each button
         buttonFileProject.onClick.AddListener(OpenFileMenu);
@@ -111,6 +110,7 @@ public class HideObject : MonoBehaviour
 
     void EnableButton()
     {
+        buttonChangeProfileKeycaps.interactable = false;
         buttonSaveProject.interactable = false;
         buttonHideKeycaps.interactable = false;
         buttonHideSwitches.interactable = false;
@@ -120,6 +120,7 @@ public class HideObject : MonoBehaviour
             return;
         else if (mechanicalKeyboards != null)
         {
+            buttonChangeProfileKeycaps.interactable = true;
             buttonSaveProject.interactable = true;
             buttonHideKeycaps.interactable = true;
             buttonHideSwitches.interactable = true;
@@ -127,6 +128,7 @@ public class HideObject : MonoBehaviour
         }
     }
 
+    // ANEH
     void HideKeycaps()
     {
         GameObject[] targetKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
@@ -135,14 +137,14 @@ public class HideObject : MonoBehaviour
             targetKeycap.GetComponent<MeshCollider>().enabled = false;
         }
 
-        GameObject[] targetSwitches = GameObject.FindGameObjectsWithTag("Switches");
-        foreach (GameObject targetSwitch in targetSwitches)
-        {
-            targetSwitch.GetComponent<MeshCollider>().enabled = true;
-        }
+        //GameObject[] targetSwitches = GameObject.FindGameObjectsWithTag("Switches");
+        //foreach (GameObject targetSwitch in targetSwitches)
+        //{
+        //    targetSwitch.GetComponent<MeshCollider>().enabled = true;
+        //}
 
-        keycaps = mechanicalKeyboards.transform.Find("Keycaps");
-        keycaps.gameObject.SetActive(false);
+        //keycaps = mechanicalKeyboards.transform.Find("Keycaps");
+        //keycaps.gameObject.SetActive(false);
         //buttonHideKeycaps.GetComponentInChildren<Text>().text = "Unhide Keycaps";
         buttonHideKeycaps.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Unhide Keycaps Icon");
         buttonHideKeycaps.onClick.RemoveAllListeners();
@@ -152,11 +154,11 @@ public class HideObject : MonoBehaviour
     void UnhideKeycaps()
     {
 
-        GameObject[] targetSwitches = GameObject.FindGameObjectsWithTag("Switches");
-        foreach (GameObject targetSwitch in targetSwitches)
-        {
-            targetSwitch.GetComponent<MeshCollider>().enabled = false;
-        }
+        //GameObject[] targetSwitches = GameObject.FindGameObjectsWithTag("Switches");
+        //foreach (GameObject targetSwitch in targetSwitches)
+        //{
+        //    targetSwitch.GetComponent<MeshCollider>().enabled = false;
+        //}
 
         GameObject[] targetKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
         foreach(GameObject targetKeycap in targetKeycaps)
@@ -164,8 +166,8 @@ public class HideObject : MonoBehaviour
             targetKeycap.GetComponent<MeshCollider>().enabled = true;
         }
 
-        keycaps = mechanicalKeyboards.transform.Find("Keycaps");
-        keycaps.gameObject.SetActive(true);
+        //keycaps = mechanicalKeyboards.transform.Find("Keycaps");
+        //keycaps.gameObject.SetActive(true);
         //buttonHideKeycaps.GetComponentInChildren<Text>().text = "Hide Keycaps";
         buttonHideKeycaps.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Hide Keycaps Icon");
         buttonHideKeycaps.onClick.RemoveAllListeners();
@@ -174,8 +176,13 @@ public class HideObject : MonoBehaviour
 
     void HideSwitches()
     {
-        switches = mechanicalKeyboards.transform.Find("Switches");
-        switches.gameObject.SetActive(false);
+        GameObject[] targetSwitches = GameObject.FindGameObjectsWithTag("Switches");
+        foreach (GameObject targetSwitch in targetSwitches)
+        {
+            targetSwitch.GetComponent<MeshCollider>().enabled = false;
+        }
+        //switches = mechanicalKeyboards.transform.Find("Switches");
+        //switches.gameObject.SetActive(false);
         //buttonHideSwitches.GetComponentInChildren<Text>().text = "Unhide Switches";
         buttonHideSwitches.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Unhide Switches Icon");
         buttonHideSwitches.onClick.RemoveAllListeners();
@@ -184,12 +191,56 @@ public class HideObject : MonoBehaviour
 
     void UnhideSwitches()
     {
-        switches = mechanicalKeyboards.transform.Find("Switches");
-        switches.gameObject.SetActive(true);
+        GameObject[] targetSwitches = GameObject.FindGameObjectsWithTag("Switches");
+        foreach (GameObject targetSwitch in targetSwitches)
+        {
+            targetSwitch.GetComponent<MeshCollider>().enabled = true;
+        }
+        //switches = mechanicalKeyboards.transform.Find("Switches");
+        //switches.gameObject.SetActive(true);
         //buttonHideSwitches.GetComponentInChildren<Text>().text = "Hide Switches";
         buttonHideSwitches.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Hide Switches Icon");
         buttonHideSwitches.onClick.RemoveAllListeners();
         buttonHideSwitches.onClick.AddListener(HideSwitches);
+    }
+
+    // 1. ambil material setiap keycap
+    // 2. nonaktifkan keycap saat ini
+    // 3. aktifkan keycap lawan
+    // 4. foreach
+    void ChangeKeycapProfile()
+    {
+        GameObject[] targetKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
+        string keycapsProfile = GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name;
+        Material[][] keyMats = new Material[targetKeycaps.Length][];
+        for (int i = 0; i < targetKeycaps.Length; i++)
+        {
+            keyMats[i] = new Material[targetKeycaps[i].GetComponent<MeshRenderer>().materials.Length];
+            for (int j = 0; j < keyMats[i].Length; j++)
+            {
+                keyMats[i][j] = targetKeycaps[i].GetComponent<MeshRenderer>().materials[j];
+            }
+        }
+
+        if (keycapsProfile == "Cherry Keycaps")
+        {
+            GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find(keycapsProfile).gameObject.SetActive(false);
+            GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find("SA Keycaps").gameObject.SetActive(true);
+        }
+        else if (keycapsProfile == "SA Keycaps")
+        {
+            GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find(keycapsProfile).gameObject.SetActive(false);
+            GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find("Cherry Keycaps").gameObject.SetActive(true);
+        }
+
+        GameObject[] newTargetKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
+        for (int i = 0; i < newTargetKeycaps.Length; i++)
+        {
+            for (int j = 0; j < keyMats[i].Length; j++)
+            {
+                newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j] = keyMats[i][j];
+            }
+        }
     }
 
     void HidePropCKC()
