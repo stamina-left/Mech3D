@@ -3471,8 +3471,13 @@ GameObject:
   - component: {fileID: 64484794985097364}
   - component: {fileID: 122110393516832648}
   m_Layer: 0
+<<<<<<< HEAD:Assets/Prefabs/Mechanical Keyboards/SA Keycaps/Fullsize with SA Keycap (SA Eine) Complete.prefab
+  m_Name: Fullsize with SA Keycap (SA Eine) Complete
+  m_TagString: MechanicalKeyboards
+=======
   m_Name: UP
   m_TagString: Keycaps
+>>>>>>> 108c8ad3c5ae5de9faf6373620b0dfe691161097:Assets/Prefabs/Mechanical Keyboards/SA Keycaps/Fullsize with SA Keycap (SA Eine) Complete 1.prefab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
