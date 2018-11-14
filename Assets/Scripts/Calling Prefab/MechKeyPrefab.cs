@@ -41,6 +41,7 @@ public class MechKeyPrefab : MonoBehaviour {
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
         GameObject.Find("Canvas").transform.GetChild(0).gameObject.SetActive(true);
+        GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.SetActive(true);
     }
 
     void mechaTKL ()
@@ -56,6 +57,7 @@ public class MechKeyPrefab : MonoBehaviour {
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
         GameObject.Find("Canvas").transform.GetChild(0).gameObject.SetActive(true);
+        GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.SetActive(true);
     }
 
     void mecha60 ()
@@ -71,6 +73,7 @@ public class MechKeyPrefab : MonoBehaviour {
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
         GameObject.Find("Canvas").transform.GetChild(0).gameObject.SetActive(true);
+        GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.SetActive(true);
     }
 
     void checkMechaExist()
