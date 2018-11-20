@@ -522,6 +522,8 @@ MonoBehaviour:
   buttonFullsize: {fileID: 43730702}
   buttonTKL: {fileID: 326879239}
   button60: {fileID: 1499527699}
+  buttonSave: {fileID: 1646450298}
+  buttonLoad: {fileID: 2107641306}
 --- !u!4 &112457692
 Transform:
   m_ObjectHideFlags: 0
@@ -1835,6 +1837,20 @@ GameObject:
   m_PrefabParentObject: {fileID: 1064550526183136, guid: 553634e13ebe42f48b76ec2316f15554,
     type: 2}
   m_PrefabInternal: {fileID: 1823538524}
+--- !u!114 &628394788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 628394787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91d7f583d09346440adbffc21efcd829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyboardName: 
+  keycapsProfile: 
+  caseMaterial: {fileID: 0}
 --- !u!1 &654888454
 GameObject:
   m_ObjectHideFlags: 0
@@ -3878,6 +3894,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 1505012821848946, guid: e5ede87a0c47fb649bb2a72084406209, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e5ede87a0c47fb649bb2a72084406209, type: 2}
   m_IsPrefabParent: 0
@@ -4253,6 +4273,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 1731250674360326, guid: bcaff786d1ceafc4aacc4a0704c91d4a, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bcaff786d1ceafc4aacc4a0704c91d4a, type: 2}
   m_IsPrefabParent: 0
@@ -4261,6 +4285,20 @@ GameObject:
   m_PrefabParentObject: {fileID: 1731250674360326, guid: bcaff786d1ceafc4aacc4a0704c91d4a,
     type: 2}
   m_PrefabInternal: {fileID: 1412962592}
+--- !u!114 &1412962594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1412962593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91d7f583d09346440adbffc21efcd829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyboardName: 
+  keycapsProfile: 
+  caseMaterial: {fileID: 0}
 --- !u!1 &1422610682
 GameObject:
   m_ObjectHideFlags: 0
@@ -5401,7 +5439,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1667434589}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.109792285
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6243,6 +6281,10 @@ Prefab:
     - target: {fileID: 4696335106765476, guid: 553634e13ebe42f48b76ec2316f15554, type: 2}
       propertyPath: m_RootOrder
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1064550526183136, guid: 553634e13ebe42f48b76ec2316f15554, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 553634e13ebe42f48b76ec2316f15554, type: 2}

@@ -137,7 +137,7 @@ public class HideObject : MonoBehaviour
     // 2. ganti dengan tag keycaps & component halo di-matikan
     // 3. ambil keycap dengan tag Keycaps
     // 4. ambil parent dari keycap tsb (untuk function unhide)
-    void HideKeycaps() 
+    public void HideKeycaps() 
     {
         GameObject[] otherSelectedKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
         foreach (GameObject otherSelectedKeycap in otherSelectedKeycaps)
@@ -173,7 +173,7 @@ public class HideObject : MonoBehaviour
         buttonHideKeycaps.onClick.AddListener(UnhideKeycaps);
     }
 
-    void UnhideKeycaps() // tidak bisa menemukan objek sebelumya
+    public void UnhideKeycaps() // tidak bisa menemukan objek sebelumya
     {
 
         //GameObject[] targetSwitches = GameObject.FindGameObjectsWithTag("Switches");
@@ -199,13 +199,23 @@ public class HideObject : MonoBehaviour
         buttonHideKeycaps.onClick.AddListener(HideKeycaps);
     }
 
-    void HideSwitches()
+    public void HideSwitches()
     {
-        GameObject[] targetSwitches = GameObject.FindGameObjectsWithTag("Switches");
-        foreach (GameObject targetSwitch in targetSwitches)
+        //GameObject[] targetSwitches = GameObject.FindGameObjectsWithTag("Switches");
+        //foreach (GameObject targetSwitch in targetSwitches)
+        //{
+        //    targetSwitch.GetComponent<MeshCollider>().enabled = false;
+        //}
+        GameObject[] otherSelectedSwitches = GameObject.FindGameObjectsWithTag("SwitchesSelected");
+        foreach (GameObject otherSelectedSwitch in otherSelectedSwitches)
         {
-            targetSwitch.GetComponent<MeshCollider>().enabled = false;
+            Behaviour oskHalo = (Behaviour)otherSelectedSwitch.GetComponent("Halo");
+            oskHalo.enabled = false;
+            otherSelectedSwitch.tag = "Switches";
         }
+        
+        GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find("Switches").gameObject.SetActive(false);
+
         //switches = mechanicalKeyboards.transform.Find("Switches");
         //switches.gameObject.SetActive(false);
         //buttonHideSwitches.GetComponentInChildren<Text>().text = "Unhide Switches";
@@ -214,13 +224,16 @@ public class HideObject : MonoBehaviour
         buttonHideSwitches.onClick.AddListener(UnhideSwitches);
     }
 
-    void UnhideSwitches()
+    public void UnhideSwitches()
     {
-        GameObject[] targetSwitches = GameObject.FindGameObjectsWithTag("Switches");
-        foreach (GameObject targetSwitch in targetSwitches)
-        {
-            targetSwitch.GetComponent<MeshCollider>().enabled = true;
-        }
+        //GameObject[] targetSwitches = GameObject.FindGameObjectsWithTag("Switches");
+        //foreach (GameObject targetSwitch in targetSwitches)
+        //{
+        //    targetSwitch.GetComponent<MeshCollider>().enabled = true;
+        //}
+
+        GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find("Switches").gameObject.SetActive(true);
+
         //switches = mechanicalKeyboards.transform.Find("Switches");
         //switches.gameObject.SetActive(true);
         //buttonHideSwitches.GetComponentInChildren<Text>().text = "Hide Switches";
@@ -238,15 +251,23 @@ public class HideObject : MonoBehaviour
     // 3. aktifkan keycap lawan
     // 4. foreach
     // 5. button icon diganti
-    void ChangeKeycapProfile()
+    public void ChangeKeycapProfile()
     {
+        GameObject[] otherSelectedKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+        foreach(GameObject otherSelectedKeycap in otherSelectedKeycaps)
+        {
+            Behaviour oskHalo = (Behaviour)otherSelectedKeycap.GetComponent("Halo");
+            oskHalo.enabled = false;
+            otherSelectedKeycap.tag = "Keycaps";
+        } // 1. buat KeycapsSelected jadi Keycaps
+
         if (GameObject.FindGameObjectWithTag("Keycaps") == null)
         {
             GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find(keycapsParent).gameObject.SetActive(true);
             buttonHideKeycaps.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Hide Keycaps Icon");
             buttonHideKeycaps.onClick.RemoveAllListeners();
             buttonHideKeycaps.onClick.AddListener(HideKeycaps);
-        }
+        } // 1.5. Kalau misal keycaps yang mau dirubah, tersembunyi: buat btn HideKeycapsIcon kembali semula, lalu setactive true semua keycaps
 
         GameObject[] targetKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
         string keycapsProfile = GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name;
@@ -278,9 +299,9 @@ public class HideObject : MonoBehaviour
         {
             for (int j = 0; j < keyMats[i].Length; j++)
             {
-                Debug.Log("I-" + i + " & J-" + j);
-                Debug.Log(newTargetKeycaps[i].name + " & " + keyMats[i].Length);
-                newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j] = keyMats[i][j]; // Keycap Spacebar Error: Array index is out of range
+                //Debug.Log("I-" + i + " & J-" + j);
+                //Debug.Log(newTargetKeycaps[i].name + " & " + newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].name);
+                newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].color = keyMats[i][j].color; // Keycap Spacebar Error: Array index is out of range
             }
         }
     }
