@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class HideObject : MonoBehaviour
 {
     public Canvas canvasFile, canvasCreate, canvasProperties, canvasColorPaletteSelection, canvasColorPalette, canvasSwitchesSelection;
-    public Button buttonFileProject, buttonChangeProfileKeycaps, buttonSaveProject, buttonHideKeycaps, buttonHideSwitches, buttonChangeKeycapsColor, buttonChangeSwitches,
+    public Button buttonFileProject, buttonChangeProfileKeycaps, buttonReverseColorKeycaps,
+        buttonSaveProject, buttonHideKeycaps, buttonHideSwitches, buttonChangeKeycapsColor, buttonChangeSwitches,
         buttonCreate, buttonProperties, buttonCloseFile, buttonCloseCreate, buttonCloseProperties, buttonCloseChangeKeycapsColor,
         buttonCloseColorPalette, buttonCloseChangeSwitches;
     private GameObject mechanicalKeyboards;
@@ -43,6 +44,7 @@ public class HideObject : MonoBehaviour
         // After hide some object, add listener to each button
         buttonFileProject.onClick.AddListener(OpenFileMenu);
         buttonChangeProfileKeycaps.onClick.AddListener(ChangeKeycapProfile);
+        // buttonReverseColorKeycaps sudah diatur listener di script ChangeColorPrefab
 
         buttonCreate.onClick.AddListener(OpenCreateMenu);
         buttonProperties.onClick.AddListener(OpenPropertiesMenu);
@@ -71,6 +73,7 @@ public class HideObject : MonoBehaviour
     {
         buttonFileProject.gameObject.SetActive(false);
         buttonChangeProfileKeycaps.gameObject.SetActive(false);
+        buttonReverseColorKeycaps.gameObject.SetActive(false);
         canvasFile.GetComponent<CanvasGroup>().alpha = 1f;
         canvasFile.GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
@@ -81,6 +84,7 @@ public class HideObject : MonoBehaviour
         canvasFile.GetComponent<CanvasGroup>().blocksRaycasts = false;
         buttonFileProject.gameObject.SetActive(true);
         buttonChangeProfileKeycaps.gameObject.SetActive(true);
+        buttonReverseColorKeycaps.gameObject.SetActive(true);
     }
 
     void OpenCreateMenu()
@@ -116,6 +120,7 @@ public class HideObject : MonoBehaviour
     void EnableButton()
     {
         buttonChangeProfileKeycaps.interactable = false;
+        buttonReverseColorKeycaps.interactable = false;
         buttonSaveProject.interactable = false;
         buttonHideKeycaps.interactable = false;
         buttonHideSwitches.interactable = false;
@@ -126,6 +131,7 @@ public class HideObject : MonoBehaviour
         else if (mechanicalKeyboards != null)
         {
             buttonChangeProfileKeycaps.interactable = true;
+            buttonReverseColorKeycaps.interactable = true;
             buttonSaveProject.interactable = true;
             buttonHideKeycaps.interactable = true;
             buttonHideSwitches.interactable = true;
@@ -271,6 +277,7 @@ public class HideObject : MonoBehaviour
 
         GameObject[] targetKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
         string keycapsProfile = GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name;
+
         Material[][] keyMats = new Material[targetKeycaps.Length][];
         for (int i = 0; i < targetKeycaps.Length; i++)
         {
@@ -280,6 +287,13 @@ public class HideObject : MonoBehaviour
                 keyMats[i][j] = targetKeycaps[i].GetComponent<MeshRenderer>().materials[j];
             }
         }
+
+
+        //GameObject[] keycapsMaterials = new GameObject[targetKeycaps.Length];
+        //for (int i = 0; i < targetKeycaps.Length; i++)
+        //{
+        //    keycapsMaterials[i] = targetKeycaps[i];
+        //}
 
         if (keycapsProfile == "Cherry Keycaps")
         {
@@ -295,13 +309,52 @@ public class HideObject : MonoBehaviour
         }
 
         GameObject[] newTargetKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
+        //for (int i = 0; i < newTargetKeycaps.Length; i++)
+        //{
+        //    //Debug.Log(keycapsMaterials[i].name); // JALAN
+        //    //if ((newTargetKeycaps[i].transform.position.x == keycapsMaterials[i].transform.position.x) && (newTargetKeycaps[i].transform.position.z == keycapsMaterials[i].transform.position.z))
+        //    //{
+        //    //    for (int j = 0; j < newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length; j++)
+        //    //    {
+        //    //        newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j] = keycapsMaterials[i].GetComponent<MeshRenderer>().materials[j];
+        //    //    }
+        //    //}
+        //    for (int j = 0; j < keycapsMaterials.Length; j++)
+        //    {
+        //        if ((newTargetKeycaps[i].transform.position.x != keycapsMaterials[i].transform.position.x) || (newTargetKeycaps[i].transform.position.z != keycapsMaterials[i].transform.position.z))
+        //            //Debug.LogError("Keycaps didn't match. " + keycapsMaterials[j].name);
+        //            return;
+        //        for (int k = 0; k < newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length; k++)
+        //            newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[k] = keycapsMaterials[j].GetComponent<MeshRenderer>().materials[k];
+        //    }
+        //}
+
+
         for (int i = 0; i < newTargetKeycaps.Length; i++)
         {
             for (int j = 0; j < keyMats[i].Length; j++)
+            //for (int j = 0; j < keycapsMaterials.Length; j++)
             {
                 //Debug.Log("I-" + i + " & J-" + j);
                 //Debug.Log(newTargetKeycaps[i].name + " & " + newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].name);
-                newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].color = keyMats[i][j].color; // Keycap Spacebar Error: Array index is out of range
+                if (newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length < 2)
+                {
+                    newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].color = keyMats[i][j].color;
+                    j++;
+                }
+                else
+                    newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].color = keyMats[i][j].color; // Keycap Spacebar Error: Array index is out of range
+                //if ((newTargetKeycaps[i].transform.position.x == keycapsMaterials[j].transform.position.x) && (newTargetKeycaps[i].transform.position.z == keycapsMaterials[j].transform.position.z))
+                //{
+                //    for (int k = 0; k < newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length; k++)
+                //    {
+                //        newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[k] = keycapsMaterials[j].GetComponent<MeshRenderer>().materials[k];
+                //    }
+                //}
+                //else if ((newTargetKeycaps[i].transform.position.x != keycapsMaterials[j].transform.position.x) && (newTargetKeycaps[i].transform.position.z != keycapsMaterials[j].transform.position.z))
+                //{
+                //    j++;
+                //}
             }
         }
     }

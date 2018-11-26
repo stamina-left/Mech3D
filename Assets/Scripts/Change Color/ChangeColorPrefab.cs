@@ -36,12 +36,10 @@ public class ChangeColorPrefab : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKey(KeyCode.A)) // ON PROGRESS
+        if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKey(KeyCode.A)) // SUKSES
         {
             Debug.Log("Control and Type A is clicked.");
-            
-            //if (GameObject.Find("Keycaps").activeSelf) // if keycaps aren't hiding.
-            if (GameObject.FindGameObjectsWithTag("Keycaps") != null) // if keycaps aren't hiding
+            if (GameObject.FindWithTag("Keycaps") || (GameObject.FindWithTag("Keycaps") && GameObject.FindWithTag("KeycapsSelected")))
             {
                 GameObject[] otherKeycapsTarget = GameObject.FindGameObjectsWithTag("KeycapsSelected");
                 foreach (GameObject otherKeycapTarget in otherKeycapsTarget)
@@ -50,82 +48,123 @@ public class ChangeColorPrefab : MonoBehaviour {
                     oktHalo.enabled = false;
                     otherKeycapTarget.tag = "Keycaps";
                 }
-                //int keycapsCount = GameObject.Find("Keycaps").transform.childCount;
                 GameObject[] keycapsTarget = GameObject.FindGameObjectsWithTag("Keycaps");
-                //for (int i = 0; i < keycapsCount; i++)
-                for (int i = 0; i < keycapsTarget.Length; i++)
-                {
-                    //Debug.Log("Selected " + GameObject.Find("Keycaps").transform.GetChild(i).name);
-                    //Behaviour eachHalosKeycaps = (Behaviour)GameObject.Find("Keycaps").transform.GetChild(i).GetComponent("Halo");
-                    Behaviour eachHalosKeycaps = (Behaviour)keycapsTarget[i].GetComponent("Halo");
-                    //Component eachHalosKeycaps = GameObject.Find("Keycaps").transform.GetChild(i).GetComponent("Halo");
-                    //if (GameObject.Find("Keycaps").transform.GetChild(i).tag == "Keycaps")
-                    //{
-                    //    eachHalosKeycaps.GetType().GetProperty("enabled").SetValue(eachHalosKeycaps, true, null);
-                    //    GameObject.Find("Keycaps").transform.GetChild(i).tag = "KeycapsSelected";
-                    //}
-                    //else if (GameObject.Find("Keycaps").transform.GetChild(i).tag == "KeycapsSelected")
-                    //{
-                    //    eachHalosKeycaps.GetType().GetProperty("enabled").SetValue(eachHalosKeycaps, false, null);
-                    //    GameObject.Find("Keycaps").transform.GetChild(i).tag = "Keycaps";
-                    //}
-                    //if (keycapsTarget[i].tag == "Keycaps")
-                    //{
-                    //    eachHalosKeycaps.GetType().GetProperty("enabled").SetValue(eachHalosKeycaps, true, null);
-                    //    keycapsTarget[i].tag = "KeycapsSelected";
-                    //}
-                    //else if (keycapsTarget[i].tag == "KeycapsSelected")
-                    //{
-                    //    eachHalosKeycaps.GetType().GetProperty("enabled").SetValue(eachHalosKeycaps, false, null);
-                    //    keycapsTarget[i].tag = "Keycaps";
-                    //}
-                    eachHalosKeycaps.enabled = true;
-                    keycapsTarget[i].tag = "KeycapsSelected";
-                }
-            }
-            if (GameObject.FindGameObjectsWithTag("KeycapsSelected") != null)
-            {
-                GameObject[] keycapsTarget = GameObject.FindGameObjectsWithTag("KeycapsSelected");
                 foreach (GameObject keycapTarget in keycapsTarget)
                 {
                     Behaviour ktHalo = (Behaviour)keycapTarget.GetComponent("Halo");
-                    ktHalo.enabled = false;
-                    keycapTarget.tag = "Keycaps";
+                    ktHalo.enabled = true;
+                    keycapTarget.tag = "KeycapsSelected";
                 }
             }
-            if (GameObject.Find("Switches").activeSelf) // if switches aren't hiding.
+            else if (GameObject.FindWithTag("KeycapsSelected"))
             {
-                int switchesCount = GameObject.Find("Switches").transform.childCount;
-                for (int i = 0; i < switchesCount; i++)
+                GameObject[] keycapsSelectedTarget = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+                foreach (GameObject keycapSelectedTarget in keycapsSelectedTarget)
                 {
-                    Behaviour eachHalosSwitches = (Behaviour)GameObject.Find("Switches").transform.GetChild(i).GetComponent("Halo");
-                    if (GameObject.Find("Switches").transform.GetChild(i).tag == "SwitchesSelected")
-                    {
-                        eachHalosSwitches.enabled = false;
-                        GameObject.Find("Switches").transform.GetChild(i).tag = "Switches";
-                    }
-                    else if (GameObject.Find("Switches").transform.GetChild(i).tag == "Switches")
-                    {
-                        eachHalosSwitches.enabled = true;
-                        GameObject.Find("Switches").transform.GetChild(i).tag = "SwitchesSelected";
-                    }
+                    Behaviour kstHalo = (Behaviour)keycapSelectedTarget.GetComponent("Halo");
+                    kstHalo.enabled = false;
+                    keycapSelectedTarget.tag = "Keycaps";
                 }
-            }
-            if (GameObject.Find("Case").activeSelf) // if keyboard case aren't hiding.
-            {
-                //Behaviour haloCase = (Behaviour)GameObject.Find("Case").GetComponent("Halo");
-                if(GameObject.Find("Case").tag == "CaseSelected")
-                {
-                    //haloCase.enabled = false;
-                    GameObject.Find("Case").tag = "Case";
-                }
-                else if(GameObject.Find("Case").tag == "Case")
-                {
-                    //haloCase.enabled = true;
-                    GameObject.Find("Case").tag = "CaseSelected";
-                }
+                Debug.Log("No longer keycaps selected.");
             }
         }
+        //if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKey(KeyCode.A)) // ON PROGRESS
+        //{
+        //    Debug.Log("Control and Type A is clicked.");
+            
+        //    //if (GameObject.Find("Keycaps").activeSelf) // if keycaps aren't hiding.
+        //    if (GameObject.FindGameObjectsWithTag("Keycaps") != null || (GameObject.FindGameObjectsWithTag("Keycaps") != null && GameObject.FindGameObjectsWithTag("KeycapsSelected") != null)) // if keycaps aren't hiding
+        //    {
+        //        GameObject[] otherKeycapsTarget = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+        //        foreach (GameObject otherKeycapTarget in otherKeycapsTarget)
+        //        {
+        //            Behaviour oktHalo = (Behaviour)otherKeycapTarget.GetComponent("Halo");
+        //            oktHalo.enabled = false;
+        //            otherKeycapTarget.tag = "Keycaps";
+        //        }
+        //        //int keycapsCount = GameObject.Find("Keycaps").transform.childCount;
+        //        GameObject[] keycapsTarget = GameObject.FindGameObjectsWithTag("Keycaps");
+        //        //for (int i = 0; i < keycapsCount; i++)
+        //        for (int i = 0; i < keycapsTarget.Length; i++)
+        //        {
+        //            //Debug.Log("Selected " + GameObject.Find("Keycaps").transform.GetChild(i).name);
+        //            //Behaviour eachHalosKeycaps = (Behaviour)GameObject.Find("Keycaps").transform.GetChild(i).GetComponent("Halo");
+        //            Behaviour eachHalosKeycaps = (Behaviour)keycapsTarget[i].GetComponent("Halo");
+        //            //Component eachHalosKeycaps = GameObject.Find("Keycaps").transform.GetChild(i).GetComponent("Halo");
+        //            //if (GameObject.Find("Keycaps").transform.GetChild(i).tag == "Keycaps")
+        //            //{
+        //            //    eachHalosKeycaps.GetType().GetProperty("enabled").SetValue(eachHalosKeycaps, true, null);
+        //            //    GameObject.Find("Keycaps").transform.GetChild(i).tag = "KeycapsSelected";
+        //            //}
+        //            //else if (GameObject.Find("Keycaps").transform.GetChild(i).tag == "KeycapsSelected")
+        //            //{
+        //            //    eachHalosKeycaps.GetType().GetProperty("enabled").SetValue(eachHalosKeycaps, false, null);
+        //            //    GameObject.Find("Keycaps").transform.GetChild(i).tag = "Keycaps";
+        //            //}
+        //            //if (keycapsTarget[i].tag == "Keycaps")
+        //            //{
+        //            //    eachHalosKeycaps.GetType().GetProperty("enabled").SetValue(eachHalosKeycaps, true, null);
+        //            //    keycapsTarget[i].tag = "KeycapsSelected";
+        //            //}
+        //            //else if (keycapsTarget[i].tag == "KeycapsSelected")
+        //            //{
+        //            //    eachHalosKeycaps.GetType().GetProperty("enabled").SetValue(eachHalosKeycaps, false, null);
+        //            //    keycapsTarget[i].tag = "Keycaps";
+        //            //}
+        //            eachHalosKeycaps.enabled = true;
+        //            keycapsTarget[i].tag = "KeycapsSelected";
+        //        }
+        //    }
+        //    else if (GameObject.FindGameObjectsWithTag("KeycapsSelected") != null && GameObject.FindGameObjectsWithTag("Keycaps") == null)
+        //    {
+        //        GameObject[] keycapsSelectedTarget = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+        //        //foreach (GameObject keycapTarget in keycapsTarget)
+        //        //{
+        //        //    Behaviour ktHalo = (Behaviour)keycapTarget.GetComponent("Halo");
+        //        //    ktHalo.enabled = false;
+        //        //    keycapTarget.tag = "Keycaps";
+        //        //}
+        //        Debug.Log(keycapsSelectedTarget.Length); // TIDAK JALAN
+        //        for (int i = 0; i < keycapsSelectedTarget.Length; i++)
+        //        {
+        //            Behaviour ktHalo = (Behaviour)keycapsSelectedTarget[i].GetComponent("Halo");
+        //            ktHalo.enabled = false;
+        //            keycapsSelectedTarget[i].tag = "Keycaps";
+        //        }
+        //    }
+        //    //if (GameObject.Find("Switches").activeSelf) // if switches aren't hiding.
+        //    //{
+        //    //    int switchesCount = GameObject.Find("Switches").transform.childCount;
+        //    //    for (int i = 0; i < switchesCount; i++)
+        //    //    {
+        //    //        Behaviour eachHalosSwitches = (Behaviour)GameObject.Find("Switches").transform.GetChild(i).GetComponent("Halo");
+        //    //        if (GameObject.Find("Switches").transform.GetChild(i).tag == "SwitchesSelected")
+        //    //        {
+        //    //            eachHalosSwitches.enabled = false;
+        //    //            GameObject.Find("Switches").transform.GetChild(i).tag = "Switches";
+        //    //        }
+        //    //        else if (GameObject.Find("Switches").transform.GetChild(i).tag == "Switches")
+        //    //        {
+        //    //            eachHalosSwitches.enabled = true;
+        //    //            GameObject.Find("Switches").transform.GetChild(i).tag = "SwitchesSelected";
+        //    //        }
+        //    //    }
+        //    //}
+        //    //if (GameObject.Find("Case").activeSelf) // if keyboard case aren't hiding.
+        //    //{
+        //    //    //Behaviour haloCase = (Behaviour)GameObject.Find("Case").GetComponent("Halo");
+        //    //    if(GameObject.Find("Case").tag == "CaseSelected")
+        //    //    {
+        //    //        //haloCase.enabled = false;
+        //    //        GameObject.Find("Case").tag = "Case";
+        //    //    }
+        //    //    else if(GameObject.Find("Case").tag == "Case")
+        //    //    {
+        //    //        //haloCase.enabled = true;
+        //    //        GameObject.Find("Case").tag = "CaseSelected";
+        //    //    }
+        //    //}
+        //}
         else if ((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) && Input.GetMouseButtonDown(0)) // ON PROGRESS
         {
             //
@@ -168,7 +207,7 @@ public class ChangeColorPrefab : MonoBehaviour {
             //}
             if (hit && hitInfo.transform.tag == "Keycaps")
             {
-                Debug.Log(hitInfo.transform.tag);
+                //Debug.Log(hitInfo.transform.tag); // Jalan
                 Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
                 hitInfo.transform.tag = "KeycapsSelected";
                 hitHalo.GetType().GetProperty("enabled").SetValue(hitHalo, true, null);
@@ -345,18 +384,42 @@ public class ChangeColorPrefab : MonoBehaviour {
         }
     }
 
-    void reverseColor()
+    void reverseColor() // MASIH BUG
     {
+        //Debug.Log(GameObject.FindWithTag("MechanicalKeyboards").transform.Find("Space").GetComponent<MeshRenderer>().materials.Length); // TIDAK JALAN
+        //Debug.Log(GameObject.FindWithTag("MechanicalKeyboards").transform.Find("Space").GetComponent<MeshRenderer>().material.name); // TIDAK JALAN
         GameObject[] allKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
-        Color materialOne, materialTwo;
-        foreach (GameObject eachKeycap in allKeycaps)
-        {
-            materialOne = eachKeycap.GetComponent<MeshRenderer>().materials[0].color; // outer
-            materialTwo = eachKeycap.GetComponent<MeshRenderer>().materials[1].color; // font
+        //Material materialOne, materialTwo;
+        //Debug.Log(allKeycaps.Length); // JALAN
+        string[][] keycapsMaterial = new string[allKeycaps.Length][];
 
-            eachKeycap.GetComponent<MeshRenderer>().materials[0].color = materialTwo;
-            eachKeycap.GetComponent<MeshRenderer>().materials[1].color = materialOne;
+        for (int i = 0; i < allKeycaps.Length; i++)
+        {
+            keycapsMaterial[i] = new string[allKeycaps[i].GetComponent<MeshRenderer>().materials.Length];
+            for (int j = 0; j < allKeycaps[i].GetComponent<MeshRenderer>().materials.Length; j++)
+                keycapsMaterial[i][j] = allKeycaps[i].GetComponent<MeshRenderer>().materials[j].name;
         }
+
+        for (int i = 0; i < allKeycaps.Length; i++)
+        {
+            for (int j = 0; j < allKeycaps[i].GetComponent<MeshRenderer>().materials.Length; j++)
+            {
+                for (int k = keycapsMaterial[i].Length-1; k > -1; k--)
+                {
+                    //Debug.Log("Length: " + keycapsMaterial[i].Length + " & I: " + i + " & J: " + j + " & K: " + k); // JALAN
+                    allKeycaps[i].GetComponent<MeshRenderer>().materials[j] = Resources.Load<Material>("Materials/" + keycapsMaterial[i][k]);
+                }
+            }
+        }
+
+        //foreach (GameObject eachKeycap in allKeycaps)
+        //{
+        //    materialOne = eachKeycap.GetComponent<MeshRenderer>().materials[0].color; // outer
+        //    materialTwo = eachKeycap.GetComponent<MeshRenderer>().materials[1].color; // font
+
+        //    eachKeycap.GetComponent<MeshRenderer>().materials[0].color = materialTwo;
+        //    eachKeycap.GetComponent<MeshRenderer>().materials[1].color = materialOne;
+        //}
     }
 
     void setColor(Button btnSet, Material matSet)

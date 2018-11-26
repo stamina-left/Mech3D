@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using SimpleFileBrowser;
 
 public class MechKeyPrefab : MonoBehaviour {
 
@@ -22,8 +23,11 @@ public class MechKeyPrefab : MonoBehaviour {
         btnTKL.onClick.AddListener(mechaTKL);
         btn60.onClick.AddListener(mecha60);
 
-        buttonSave.onClick.AddListener(Save);
-        buttonLoad.onClick.AddListener(Load);
+        //buttonSave.onClick.AddListener(Save);
+        //buttonLoad.onClick.AddListener(Load);
+
+        buttonSave.onClick.AddListener(openSaveMenu);
+        buttonLoad.onClick.AddListener(openLoadMenu);
     }
 	
 	// Update is called once per frame
@@ -31,73 +35,170 @@ public class MechKeyPrefab : MonoBehaviour {
 		
 	}
 
-    #region Tes Save dan Load (BERHASIL)
-    public void Save()
+    public void openSaveMenu()
     {
-        SaveLoadManager.SaveProject(GameObject.FindGameObjectWithTag("MechanicalKeyboards").GetComponent<MechanicalKeyboard>());
+        FileBrowser.SetFilters(true, new FileBrowser.Filter("Save File", ".sav")); // atur file extension yang dapat dibaca oleh file explorer
+        FileBrowser.SetDefaultFilter(".sav"); // set extension filter yang utama
+        FileBrowser.SetExcludedExtensions(".jpg", ".png", ".zip", ".rar", ".exe"); // file extension yang tidak dimasukkan di file explorer
+        FileBrowser.AddQuickLink("Users", Application.persistentDataPath, null); // atur lokasi utama saat pertama buka file explorer
+        StartCoroutine(ShowSaveDialogCoroutine()); // JALAN, tapi persistent data path tidak jalan, dan hasil save tidak muncul.
+        //Debug.Log(Application.persistentDataPath); // JALAN
     }
 
-    public void Load()
+    IEnumerator ShowSaveDialogCoroutine()
     {
-        string[][][] loadedMaterials = SaveLoadManager.LoadProject();
-        GameObject[] prefabArray = new GameObject[3];
-
-        prefabFullsize.SetActive(true);
-        prefabTKL.SetActive(true);
-        prefab60.SetActive(true);
-
-        prefabArray[0] = prefabFullsize;
-        prefabArray[1] = prefabTKL;
-        prefabArray[2] = prefab60;
-
-        //Debug.Log(loadedMaterials.Length); // JALAN
-
-        //GameObject.Find("Compact ANSI Keyboard").SetActive(true);
-        //GameObject.Find("Fullsize ANSI Keyboard").SetActive(true);
-        //GameObject.Find("Tenkeyless ANSI Keyboard").SetActive(true);
-        
-        for (int i = 0; i < prefabArray.Length; i++)
+        yield return FileBrowser.WaitForSaveDialog(false, null, "Save", "Save");
+        //Debug.Log(FileBrowser.Success + " " + FileBrowser.Result); // True C:\Users\Albert Pangestu\Documents\Test.sav
+        if (FileBrowser.Success) // Berhasil
         {
-            if (prefabArray[i].name != loadedMaterials[0][0][0])
-                prefabArray[i].SetActive(false);
-            else if (prefabArray[i].name == loadedMaterials[0][0][0]) // 1. Kalau pengecekan nama keyboard sama
+            SaveLoadManager.SaveProject(GameObject.FindGameObjectWithTag("MechanicalKeyboards").GetComponent<MechanicalKeyboard>(), FileBrowser.Result);
+        }
+
+    }
+
+    public void openLoadMenu()
+    {
+        FileBrowser.SetFilters(true, new FileBrowser.Filter("Save File", ".sav"));
+        FileBrowser.SetDefaultFilter(".sav");
+        FileBrowser.SetExcludedExtensions(".jpg", ".png", ".zip", ".rar", ".exe");
+        FileBrowser.AddQuickLink("Users", Application.persistentDataPath, null);
+        StartCoroutine(ShowLoadDialogCoroutine());
+    }
+
+    IEnumerator ShowLoadDialogCoroutine()
+    {
+        yield return FileBrowser.WaitForLoadDialog(false, null, "Load", "Load");
+        //Debug.Log(FileBrowser.Success + " " + FileBrowser.Result);
+        if (FileBrowser.Success)
+        {
+            string[][][] loadedMaterials = SaveLoadManager.LoadProject(FileBrowser.Result);
+            GameObject[] prefabArray = new GameObject[3];
+
+            prefabFullsize.SetActive(true);
+            prefabTKL.SetActive(true);
+            prefab60.SetActive(true);
+
+            prefabArray[0] = prefabFullsize;
+            prefabArray[1] = prefabTKL;
+            prefabArray[2] = prefab60;
+
+            //Debug.Log(loadedMaterials.Length); // JALAN
+
+            //GameObject.Find("Compact ANSI Keyboard").SetActive(true);
+            //GameObject.Find("Fullsize ANSI Keyboard").SetActive(true);
+            //GameObject.Find("Tenkeyless ANSI Keyboard").SetActive(true);
+
+            for (int i = 0; i < prefabArray.Length; i++)
             {
-                if (prefabArray[i].transform.GetChild(1).name == loadedMaterials[1][0][0]) // 2.1. Jika nama keycaps profile "Cherry Keycaps"
+                if (prefabArray[i].name != loadedMaterials[0][0][0])
+                    prefabArray[i].SetActive(false);
+                else if (prefabArray[i].name == loadedMaterials[0][0][0]) // 1. Kalau pengecekan nama keyboard sama
                 {
-                    prefabArray[i].transform.GetChild(1).gameObject.SetActive(true);
-                    prefabArray[i].transform.GetChild(2).gameObject.SetActive(false);
-
-                    for (int j = 0; j < prefabArray[i].transform.GetChild(1).childCount; j++) // 3.1.1. For Length dari jumlah keycaps
+                    if (prefabArray[i].transform.GetChild(1).name == loadedMaterials[1][0][0]) // 2.1. Jika nama keycaps profile "Cherry Keycaps"
                     {
-                        for (int k = 0; k < prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++) // 3.1.2. For Length dari jumlah warna keycaps
+                        prefabArray[i].transform.GetChild(1).gameObject.SetActive(true);
+                        prefabArray[i].transform.GetChild(2).gameObject.SetActive(false);
+
+                        for (int j = 0; j < prefabArray[i].transform.GetChild(1).childCount; j++) // 3.1.1. For Length dari jumlah keycaps
                         {
-                            prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials[k] = Resources.Load<Material>("Materials/" + loadedMaterials[2][j][k]);
+                            for (int k = 0; k < prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++) // 3.1.2. For Length dari jumlah warna keycaps
+                            {
+                                prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials[k] = Resources.Load<Material>("Materials/" + loadedMaterials[2][j][k]);
+                            }
                         }
                     }
-                }
-                else if (prefabArray[i].transform.GetChild(2).name == loadedMaterials[1][0][0]) // 2.2. Jika nama keycaps profile "SA Keycaps"
-                {
-                    prefabArray[i].transform.GetChild(2).gameObject.SetActive(true);
-                    prefabArray[i].transform.GetChild(1).gameObject.SetActive(false);
-
-                    for (int j = 0; j < prefabArray[i].transform.GetChild(2).childCount; j++) // 3.2.1. For Length dari jumlah keycaps
+                    else if (prefabArray[i].transform.GetChild(2).name == loadedMaterials[1][0][0]) // 2.2. Jika nama keycaps profile "SA Keycaps"
                     {
-                        for (int k = 0; k < prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++) // 3.2.2. For Length dari jumlah warna keycaps
+                        prefabArray[i].transform.GetChild(2).gameObject.SetActive(true);
+                        prefabArray[i].transform.GetChild(1).gameObject.SetActive(false);
+
+                        for (int j = 0; j < prefabArray[i].transform.GetChild(2).childCount; j++) // 3.2.1. For Length dari jumlah keycaps
                         {
-                            prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials[k] = Resources.Load<Material>("Materials/" + loadedMaterials[2][j][k]);
+                            for (int k = 0; k < prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++) // 3.2.2. For Length dari jumlah warna keycaps
+                            {
+                                prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials[k] = Resources.Load<Material>("Materials/" + loadedMaterials[2][j][k]);
+                            }
                         }
                     }
-                }
-                prefabArray[i].transform.GetChild(0).GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/" + loadedMaterials[3][0][0]); // 4. Masukkkan material case
-                for (int l = 0; l < prefabArray[i].transform.GetChild(3).childCount; l++) // 5.1. For Length dari jumlah switch pada Keyboard
-                {
-                    for (int m = 0; m < prefabArray[i].transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials.Length; m++) // 5.2. For Length dari jumlah warna pada switch
+                    prefabArray[i].transform.GetChild(0).GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/" + loadedMaterials[3][0][0]); // 4. Masukkkan material case
+                    for (int l = 0; l < prefabArray[i].transform.GetChild(3).childCount; l++) // 5.1. For Length dari jumlah switch pada Keyboard
                     {
-                        prefabArray[i].transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials[m] = Resources.Load<Material>("Materials/" + loadedMaterials[4][l][m]);
+                        for (int m = 0; m < prefabArray[i].transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials.Length; m++) // 5.2. For Length dari jumlah warna pada switch
+                        {
+                            prefabArray[i].transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials[m] = Resources.Load<Material>("Materials/" + loadedMaterials[4][l][m]);
+                        }
                     }
                 }
             }
-        }
+    }
+
+    #region Tes Save dan Load (BERHASIL)
+    //public void Save()
+    //{
+    //    SaveLoadManager.SaveProject(GameObject.FindGameObjectWithTag("MechanicalKeyboards").GetComponent<MechanicalKeyboard>());
+    //}
+
+    //public void Load()
+    //{
+    //    string[][][] loadedMaterials = SaveLoadManager.LoadProject();
+    //    GameObject[] prefabArray = new GameObject[3];
+
+    //    prefabFullsize.SetActive(true);
+    //    prefabTKL.SetActive(true);
+    //    prefab60.SetActive(true);
+
+    //    prefabArray[0] = prefabFullsize;
+    //    prefabArray[1] = prefabTKL;
+    //    prefabArray[2] = prefab60;
+
+    //    //Debug.Log(loadedMaterials.Length); // JALAN
+
+    //    //GameObject.Find("Compact ANSI Keyboard").SetActive(true);
+    //    //GameObject.Find("Fullsize ANSI Keyboard").SetActive(true);
+    //    //GameObject.Find("Tenkeyless ANSI Keyboard").SetActive(true);
+        
+    //    for (int i = 0; i < prefabArray.Length; i++)
+    //    {
+    //        if (prefabArray[i].name != loadedMaterials[0][0][0])
+    //            prefabArray[i].SetActive(false);
+    //        else if (prefabArray[i].name == loadedMaterials[0][0][0]) // 1. Kalau pengecekan nama keyboard sama
+    //        {
+    //            if (prefabArray[i].transform.GetChild(1).name == loadedMaterials[1][0][0]) // 2.1. Jika nama keycaps profile "Cherry Keycaps"
+    //            {
+    //                prefabArray[i].transform.GetChild(1).gameObject.SetActive(true);
+    //                prefabArray[i].transform.GetChild(2).gameObject.SetActive(false);
+
+    //                for (int j = 0; j < prefabArray[i].transform.GetChild(1).childCount; j++) // 3.1.1. For Length dari jumlah keycaps
+    //                {
+    //                    for (int k = 0; k < prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++) // 3.1.2. For Length dari jumlah warna keycaps
+    //                    {
+    //                        prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials[k] = Resources.Load<Material>("Materials/" + loadedMaterials[2][j][k]);
+    //                    }
+    //                }
+    //            }
+    //            else if (prefabArray[i].transform.GetChild(2).name == loadedMaterials[1][0][0]) // 2.2. Jika nama keycaps profile "SA Keycaps"
+    //            {
+    //                prefabArray[i].transform.GetChild(2).gameObject.SetActive(true);
+    //                prefabArray[i].transform.GetChild(1).gameObject.SetActive(false);
+
+    //                for (int j = 0; j < prefabArray[i].transform.GetChild(2).childCount; j++) // 3.2.1. For Length dari jumlah keycaps
+    //                {
+    //                    for (int k = 0; k < prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++) // 3.2.2. For Length dari jumlah warna keycaps
+    //                    {
+    //                        prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials[k] = Resources.Load<Material>("Materials/" + loadedMaterials[2][j][k]);
+    //                    }
+    //                }
+    //            }
+    //            prefabArray[i].transform.GetChild(0).GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/" + loadedMaterials[3][0][0]); // 4. Masukkkan material case
+    //            for (int l = 0; l < prefabArray[i].transform.GetChild(3).childCount; l++) // 5.1. For Length dari jumlah switch pada Keyboard
+    //            {
+    //                for (int m = 0; m < prefabArray[i].transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials.Length; m++) // 5.2. For Length dari jumlah warna pada switch
+    //                {
+    //                    prefabArray[i].transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials[m] = Resources.Load<Material>("Materials/" + loadedMaterials[4][l][m]);
+    //                }
+    //            }
+    //        }
+    //    }
 
         //GameObject[] targetKeyboards = GameObject.FindGameObjectsWithTag("MechanicalKeyboards");
         //GameObject[] targetKeycaps = new GameObject[2];
@@ -188,6 +289,8 @@ public class MechKeyPrefab : MonoBehaviour {
         GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.SetActive(true);
         GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Change Cherry Keycap Profile Icon");
 
+        GameObject.Find("Canvas").transform.Find("Reverse Color Palette Button").gameObject.SetActive(true);
+
         GameObject.Find("Canvas").transform.Find("Properties Menu Canvas").Find("Hide Keycaps").GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Hide Keycaps Icon");
         GameObject.Find("Canvas").transform.Find("Properties Menu Canvas").Find("Hide Keycaps").GetComponent<Button>().onClick.RemoveAllListeners();
         GameObject.Find("Canvas").transform.Find("Properties Menu Canvas").Find("Hide Keycaps").GetComponent<Button>().onClick.AddListener(GameObject.Find("Game Manager").transform.Find("Menu Manager").GetComponent<HideObject>().HideKeycaps);
@@ -214,6 +317,8 @@ public class MechKeyPrefab : MonoBehaviour {
         GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.SetActive(true);
         GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Change Cherry Keycap Profile Icon");
 
+        GameObject.Find("Canvas").transform.Find("Reverse Color Palette Button").gameObject.SetActive(true);
+
         GameObject.Find("Canvas").transform.Find("Properties Menu Canvas").Find("Hide Keycaps").GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Hide Keycaps Icon");
         GameObject.Find("Canvas").transform.Find("Properties Menu Canvas").Find("Hide Keycaps").GetComponent<Button>().onClick.RemoveAllListeners();
         GameObject.Find("Canvas").transform.Find("Properties Menu Canvas").Find("Hide Keycaps").GetComponent<Button>().onClick.AddListener(GameObject.Find("Game Manager").transform.Find("Menu Manager").GetComponent<HideObject>().HideKeycaps);
@@ -239,6 +344,8 @@ public class MechKeyPrefab : MonoBehaviour {
 
         GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.SetActive(true);
         GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Change Cherry Keycap Profile Icon");
+
+        GameObject.Find("Canvas").transform.Find("Reverse Color Palette Button").gameObject.SetActive(true);
 
         GameObject.Find("Canvas").transform.Find("Properties Menu Canvas").Find("Hide Keycaps").GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Hide Keycaps Icon");
         GameObject.Find("Canvas").transform.Find("Properties Menu Canvas").Find("Hide Keycaps").GetComponent<Button>().onClick.RemoveAllListeners();

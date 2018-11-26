@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using SimpleFileBrowser;
 
 public class SaveLoadManager : MonoBehaviour
 {
@@ -10,81 +11,82 @@ public class SaveLoadManager : MonoBehaviour
     //sementara masih gagal
     #region Custom Binary Files
         //public static void SaveProject(MechanicalKeyboard mechanicalKeyboard, string projectName)
-        public static void SaveProject(MechanicalKeyboard mechanicalKeyboard)
-    {
-        BinaryFormatter bf = new BinaryFormatter();
+        public static void SaveProject(MechanicalKeyboard mechanicalKeyboard, string filepath)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
         //FileStream stream = new FileStream(Application.persistentDataPath + "/" + projectName + ".sav", FileMode.Create);
-        FileStream stream = new FileStream(Application.persistentDataPath + "/MechanicalKeyboard.sav", FileMode.Create);
+        //FileStream stream = new FileStream(Application.persistentDataPath + "/MechanicalKeyboard.sav", FileMode.Create);
+        FileStream stream = new FileStream(filepath, FileMode.Create);
 
         MechanicalKeyboardData data = new MechanicalKeyboardData(mechanicalKeyboard);
 
-        //int keySwitch = int.Parse(mechanicalKeyboard.checkLayout().ToString());
+            //int keySwitch = int.Parse(mechanicalKeyboard.checkLayout().ToString());
 
-        // keycaps
-        //data.materials[0] = new string[keySwitch][];
+            // keycaps
+            //data.materials[0] = new string[keySwitch][];
 
-        // 0 = keyboard's name; 1 = keycap's name; 2 = keycaps; 3 = cases; 4 = switches;
+            // 0 = keyboard's name; 1 = keycap's name; 2 = keycaps; 3 = cases; 4 = switches;
 
-        //data.materials[0] = new string[1][];
-        //data.materials[0][0] = new string[1];
-        //data.materials[0][0][0] = mechanicalKeyboard.keyboardName;
+            //data.materials[0] = new string[1][];
+            //data.materials[0][0] = new string[1];
+            //data.materials[0][0][0] = mechanicalKeyboard.keyboardName;
 
-        //data.materials[1] = new string[1][];
-        //data.materials[1][0] = new string[1];
-        //data.materials[1][0][0] = mechanicalKeyboard.keycapsProfile;
+            //data.materials[1] = new string[1][];
+            //data.materials[1][0] = new string[1];
+            //data.materials[1][0][0] = mechanicalKeyboard.keycapsProfile;
 
-        ////for (int i = 0; i < keySwitch; i++)
-        //for (int i = 0; i < mechanicalKeyboard.keycapsMaterial.Length; i++)
-        //{
-        //    //data.materials[0][i] = new string[2];
-        //    //data.materials[0][i][0] = mechanicalKeyboard.keycapsMaterial[i][0];
-        //    //data.materials[0][i][1] = null;
+            ////for (int i = 0; i < keySwitch; i++)
+            //for (int i = 0; i < mechanicalKeyboard.keycapsMaterial.Length; i++)
+            //{
+            //    //data.materials[0][i] = new string[2];
+            //    //data.materials[0][i][0] = mechanicalKeyboard.keycapsMaterial[i][0];
+            //    //data.materials[0][i][1] = null;
 
-        //    //if (mechanicalKeyboard.keycapsMaterial[i][1] != null)
-        //    //{
-        //    //    data.materials[0][i][1] = mechanicalKeyboard.keycapsMaterial[i][1];
-        //    //}
-        //    data.materials[2] = new string[mechanicalKeyboard.keycapsMaterial.Length][];
+            //    //if (mechanicalKeyboard.keycapsMaterial[i][1] != null)
+            //    //{
+            //    //    data.materials[0][i][1] = mechanicalKeyboard.keycapsMaterial[i][1];
+            //    //}
+            //    data.materials[2] = new string[mechanicalKeyboard.keycapsMaterial.Length][];
 
-        //    for (int j = 0; j < mechanicalKeyboard.keycapsMaterial[i].Length; j++)
-        //    {
-        //        data.materials[2][i] = new string[mechanicalKeyboard.keycapsMaterial[i].Length];
-        //        data.materials[2][i][j] = mechanicalKeyboard.keycapsMaterial[i][j].name;
-        //    }
-        //}
+            //    for (int j = 0; j < mechanicalKeyboard.keycapsMaterial[i].Length; j++)
+            //    {
+            //        data.materials[2][i] = new string[mechanicalKeyboard.keycapsMaterial[i].Length];
+            //        data.materials[2][i][j] = mechanicalKeyboard.keycapsMaterial[i][j].name;
+            //    }
+            //}
 
-        //// cases
-        ////data.materials[1] = new string[1][];
-        ////data.materials[1][0] = new string[1];
-        ////data.materials[1][0][1] = mechanicalKeyboard.casesMaterial;
-        //data.materials[3] = new string[1][];
-        //data.materials[3][0] = new string[1];
-        //data.materials[3][0][0] = mechanicalKeyboard.caseMaterial.name;
+            //// cases
+            ////data.materials[1] = new string[1][];
+            ////data.materials[1][0] = new string[1];
+            ////data.materials[1][0][1] = mechanicalKeyboard.casesMaterial;
+            //data.materials[3] = new string[1][];
+            //data.materials[3][0] = new string[1];
+            //data.materials[3][0][0] = mechanicalKeyboard.caseMaterial.name;
 
-        //// switches
-        ////data.materials[2] = new string[keySwitch][];
-        //data.materials[4] = new string[mechanicalKeyboard.switchesMaterial.Length][];
+            //// switches
+            ////data.materials[2] = new string[keySwitch][];
+            //data.materials[4] = new string[mechanicalKeyboard.switchesMaterial.Length][];
 
-        ////for (int i = 0; i < keySwitch; i++)
-        //for (int i = 0; i < mechanicalKeyboard.switchesMaterial.Length; i++)
-        //{
-        //    //data.materials[2][i] = new string[3];
-        //    //data.materials[2][i][0] = mechanicalKeyboard.switchesMaterial[i][0];
-        //    //data.materials[2][i][1] = mechanicalKeyboard.switchesMaterial[i][1];
-        //    //data.materials[2][i][2] = mechanicalKeyboard.switchesMaterial[i][2];
-        //    data.materials[4][i] = new string[mechanicalKeyboard.switchesMaterial[i].Length];
+            ////for (int i = 0; i < keySwitch; i++)
+            //for (int i = 0; i < mechanicalKeyboard.switchesMaterial.Length; i++)
+            //{
+            //    //data.materials[2][i] = new string[3];
+            //    //data.materials[2][i][0] = mechanicalKeyboard.switchesMaterial[i][0];
+            //    //data.materials[2][i][1] = mechanicalKeyboard.switchesMaterial[i][1];
+            //    //data.materials[2][i][2] = mechanicalKeyboard.switchesMaterial[i][2];
+            //    data.materials[4][i] = new string[mechanicalKeyboard.switchesMaterial[i].Length];
 
-        //    for (int j = 0; j < mechanicalKeyboard.switchesMaterial[i].Length; j++)
-        //    {
-        //        data.materials[4][i][j] = mechanicalKeyboard.switchesMaterial[i][j].name;
-        //    }
-        //}
+            //    for (int j = 0; j < mechanicalKeyboard.switchesMaterial[i].Length; j++)
+            //    {
+            //        data.materials[4][i][j] = mechanicalKeyboard.switchesMaterial[i][j].name;
+            //    }
+            //}
 
-        bf.Serialize(stream, data);
-        stream.Close();
-    }
+            bf.Serialize(stream, data);
+            stream.Close();
+        }
 
-    public static string[][][] LoadProject()
+    public static string[][][] LoadProject(string filepath)
     {
         if (File.Exists(Application.persistentDataPath + "/MechanicalKeyboard.sav"))
         {
