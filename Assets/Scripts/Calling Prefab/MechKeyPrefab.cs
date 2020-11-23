@@ -8,12 +8,13 @@ public class MechKeyPrefab : MonoBehaviour {
 
     public GameObject keyboardSpawn, prefabFullsize, prefabTKL, prefab60;
     public Button buttonFullsize, buttonTKL, button60, buttonSave, buttonLoad;
+    private string[][][] loadedMaterials;
 
 	// Use this for initialization
 	void Start () {
-        prefabFullsize.SetActive(false);
-        prefabTKL.SetActive(false);
-        prefab60.SetActive(false);
+        //prefabFullsize.SetActive(false);
+        //prefabTKL.SetActive(false);
+        //prefab60.SetActive(false);
 
         Button btnFZ = buttonFullsize.GetComponent<Button>();
         Button btnTKL = buttonTKL.GetComponent<Button>();
@@ -47,11 +48,15 @@ public class MechKeyPrefab : MonoBehaviour {
 
     IEnumerator ShowSaveDialogCoroutine()
     {
+        GameObject.Find("Game Manager").transform.GetChild(1).GetComponent<HideObject>().enabled = false;
+        GameObject.Find("Main Camera").GetComponent<CameraOrbit>().enabled = false;
         yield return FileBrowser.WaitForSaveDialog(false, null, "Save", "Save");
         //Debug.Log(FileBrowser.Success + " " + FileBrowser.Result); // True C:\Users\Albert Pangestu\Documents\Test.sav
         if (FileBrowser.Success) // Berhasil
         {
             SaveLoadManager.SaveProject(GameObject.FindGameObjectWithTag("MechanicalKeyboards").GetComponent<MechanicalKeyboard>(), FileBrowser.Result);
+            GameObject.Find("Main Camera").GetComponent<CameraOrbit>().enabled = true;
+            GameObject.Find("Game Manager").transform.GetChild(1).GetComponent<HideObject>().enabled = true;
         }
 
     }
@@ -67,22 +72,36 @@ public class MechKeyPrefab : MonoBehaviour {
 
     IEnumerator ShowLoadDialogCoroutine()
     {
+        GameObject.Find("Game Manager").transform.GetChild(1).GetComponent<HideObject>().enabled = false;
+        GameObject.Find("Main Camera").GetComponent<CameraOrbit>().enabled = false;
         yield return FileBrowser.WaitForLoadDialog(false, null, "Load", "Load");
         //Debug.Log(FileBrowser.Success + " " + FileBrowser.Result);
         if (FileBrowser.Success)
         {
-            string[][][] loadedMaterials = SaveLoadManager.LoadProject(FileBrowser.Result);
+            GameObject.Find("Game Manager").transform.GetChild(1).GetComponent<HideObject>().enabled = true;
+            GameObject.Find("Main Camera").GetComponent<CameraOrbit>().enabled = true;
+
+            loadedMaterials = SaveLoadManager.LoadProject(FileBrowser.Result);
             GameObject[] prefabArray = new GameObject[3];
 
-            prefabFullsize.SetActive(true);
-            prefabTKL.SetActive(true);
-            prefab60.SetActive(true);
+            //prefabFullsize.SetActive(true);
+            //prefabTKL.SetActive(true);
+            //prefab60.SetActive(true);
 
             prefabArray[0] = prefabFullsize;
             prefabArray[1] = prefabTKL;
             prefabArray[2] = prefab60;
 
-            //Debug.Log(loadedMaterials.Length); // JALAN
+            //TEST
+            //Debug.Log(Resources.Load("Materials/2D2E30", typeof(Material)) as Material); // jalan
+            //string materials = loadedMaterials[2][0][0];
+            //Debug.Log(materials);
+            //string newPath = "Materials/" + materials;
+            //Debug.Log(Resources.Load(newPath, typeof(Material)) as Material);
+            //Debug.Log(loadedMaterials[2][0][0]); // muncul as Instance
+            //Debug.Log(Resources.Load("Materials/" + loadedMaterials[2][0][0], typeof(Material)) as Material); // Tidak Jalan
+
+            //Debug.Log(loadedMaterials[1][0][0]); // jalan, tapi keluar SA Keycaps padahal yang tersimpan Cherry Keycaps
 
             //GameObject.Find("Compact ANSI Keyboard").SetActive(true);
             //GameObject.Find("Fullsize ANSI Keyboard").SetActive(true);
@@ -91,45 +110,127 @@ public class MechKeyPrefab : MonoBehaviour {
             for (int i = 0; i < prefabArray.Length; i++)
             {
                 if (prefabArray[i].name != loadedMaterials[0][0][0])
-                    prefabArray[i].SetActive(false);
+                    i = i;
                 else if (prefabArray[i].name == loadedMaterials[0][0][0]) // 1. Kalau pengecekan nama keyboard sama
                 {
-                    if (prefabArray[i].transform.GetChild(1).name == loadedMaterials[1][0][0]) // 2.1. Jika nama keycaps profile "Cherry Keycaps"
+                    checkMechaExist();
+                    GameObject prefab = Instantiate(prefabArray[i], keyboardSpawn.transform.position, keyboardSpawn.transform.rotation);
+                    prefab.name = prefabArray[i].name;
+                    prefab.SetActive(true);
+                    //if (prefabArray[i].transform.GetChild(1).name == loadedMaterials[1][0][0]) // 2.1. Jika nama keycaps profile "Cherry Keycaps"
+                    if (prefab.transform.GetChild(1).name == loadedMaterials[1][0][0])
                     {
-                        prefabArray[i].transform.GetChild(1).gameObject.SetActive(true);
-                        prefabArray[i].transform.GetChild(2).gameObject.SetActive(false);
+                        //prefabArray[i].transform.GetChild(1).gameObject.SetActive(true);
+                        //prefabArray[i].transform.GetChild(2).gameObject.SetActive(false);
 
-                        for (int j = 0; j < prefabArray[i].transform.GetChild(1).childCount; j++) // 3.1.1. For Length dari jumlah keycaps
+                        prefab.transform.GetChild(1).gameObject.SetActive(true);
+                        prefab.transform.GetChild(2).gameObject.SetActive(false);
+
+                        //for (int j = 0; j < prefabArray[i].transform.GetChild(1).childCount; j++) // 3.1.1. For Length dari jumlah keycaps
+                        for (int j = 0; j < prefab.transform.GetChild(1).childCount; j++)
                         {
-                            for (int k = 0; k < prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++) // 3.1.2. For Length dari jumlah warna keycaps
+                            //Material[] newColor = prefab.transform.GetChild(1).GetChild(j).GetComponent<Renderer>().materials;
+
+                            if (loadedMaterials[2][j].Length > 1)
                             {
-                                prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials[k] = Resources.Load<Material>("Materials/" + loadedMaterials[2][j][k]);
+                                //for (int k = 0; k < prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++) // 3.1.2. For Length dari jumlah warna keycaps
+                                for (int k = 0; k < prefab.transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++)
+                                {
+                                    string[] new_color = loadedMaterials[2][j][k].Split(',');
+                                    //prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials[k] = Resources.Load<Material>("Materials/" + loadedMaterials[2][j][k]);
+                                    //prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials[k].color = new Color(float.Parse(new_color[0]), float.Parse(new_color[1]), float.Parse(new_color[2]), float.Parse(new_color[3]));
+                                    prefab.transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials[k].color = new Color(float.Parse(new_color[0]), float.Parse(new_color[1]), float.Parse(new_color[2]), float.Parse(new_color[3]));
+                                }
+                                //newColor[0] = Resources.Load("Materials/" + loadedMaterials[2][j][0], typeof(Material)) as Material;
+                                //newColor[1] = Resources.Load("Materials/" + loadedMaterials[2][j][1], typeof(Material)) as Material;
+
                             }
+                            else if (loadedMaterials[2][j].Length < 2)
+                            {
+                                string[] new_color = loadedMaterials[2][j][0].Split(',');
+                                //prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().material.color = new Color(float.Parse(new_color[0]), float.Parse(new_color[1]), float.Parse(new_color[2]), float.Parse(new_color[3]));
+                                prefab.transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().material.color = new Color(float.Parse(new_color[0]), float.Parse(new_color[1]), float.Parse(new_color[2]), float.Parse(new_color[3]));
+                                //newColor[0] = Resources.Load("Materials/" + loadedMaterials[2][j][0], typeof(Material)) as Material;
+                            }
+
+                            //prefab.transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials = newColor;
+                            //for (int k = 0; k < prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++) // 3.1.2. For Length dari jumlah warna keycaps
+                            //{
+                            //    string[] new_color = loadedMaterials[2][j][k].Split(',');
+                            //    //prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials[k] = Resources.Load<Material>("Materials/" + loadedMaterials[2][j][k]);
+                            //    prefabArray[i].transform.GetChild(1).GetChild(j).GetComponent<MeshRenderer>().materials[k].color = ;
+                            //}
                         }
                     }
-                    else if (prefabArray[i].transform.GetChild(2).name == loadedMaterials[1][0][0]) // 2.2. Jika nama keycaps profile "SA Keycaps"
+                    //else if (prefabArray[i].transform.GetChild(2).name == loadedMaterials[1][0][0]) // 2.2. Jika nama keycaps profile "SA Keycaps"
+                    else if (prefab.transform.GetChild(2).name == loadedMaterials[1][0][0])
                     {
-                        prefabArray[i].transform.GetChild(2).gameObject.SetActive(true);
-                        prefabArray[i].transform.GetChild(1).gameObject.SetActive(false);
+                        //prefabArray[i].transform.GetChild(2).gameObject.SetActive(true);
+                        //prefabArray[i].transform.GetChild(1).gameObject.SetActive(false);
 
-                        for (int j = 0; j < prefabArray[i].transform.GetChild(2).childCount; j++) // 3.2.1. For Length dari jumlah keycaps
+                        prefab.transform.GetChild(2).gameObject.SetActive(true);
+                        prefab.transform.GetChild(1).gameObject.SetActive(false);
+
+                        //for (int j = 0; j < prefabArray[i].transform.GetChild(2).childCount; j++) // 3.2.1. For Length dari jumlah keycaps
+                        for (int j = 0; j < prefab.transform.GetChild(2).childCount; j++)
                         {
-                            for (int k = 0; k < prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++) // 3.2.2. For Length dari jumlah warna keycaps
+                            //Material[] newColor = prefab.transform.GetChild(2).GetChild(j).GetComponent<Renderer>().materials;
+
+                            if (loadedMaterials[2][j].Length > 1)
                             {
-                                prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials[k] = Resources.Load<Material>("Materials/" + loadedMaterials[2][j][k]);
+                                //for (int k = 0; k < prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++) // 3.2.2. For Length dari jumlah warna keycaps
+                                for (int k = 0; k < prefab.transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++)
+                                {
+                                    string[] new_color = loadedMaterials[2][j][k].Split(',');
+                                    //prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials[k] = Resources.Load<Material>("Materials/" + loadedMaterials[2][j][k]);
+                                    //prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials[k].color = new Color(float.Parse(new_color[0]), float.Parse(new_color[1]), float.Parse(new_color[2]), float.Parse(new_color[3]));
+                                    prefab.transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials[k].color = new Color(float.Parse(new_color[0]), float.Parse(new_color[1]), float.Parse(new_color[2]), float.Parse(new_color[3]));
+                                }
+                                //newColor[0] = Resources.Load("Materials/" + loadedMaterials[2][j][0], typeof(Material)) as Material;
+                                //newColor[1] = Resources.Load("Materials/" + loadedMaterials[2][j][1], typeof(Material)) as Material;
                             }
+                            else if (loadedMaterials[2][j].Length < 2)
+                            {
+                                string[] new_color = loadedMaterials[2][j][0].Split(',');
+                                //prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().material.color = new Color(float.Parse(new_color[0]), float.Parse(new_color[1]), float.Parse(new_color[2]), float.Parse(new_color[3]));
+                                prefab.transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().material.color = new Color(float.Parse(new_color[0]), float.Parse(new_color[1]), float.Parse(new_color[2]), float.Parse(new_color[3]));
+                                //newColor[0] = Resources.Load("Materials/" + loadedMaterials[2][j][0], typeof(Material)) as Material;
+                            }
+
+                            //prefab.transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials = newColor;
+                            //for (int k = 0; k < prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials.Length; k++) // 3.2.2. For Length dari jumlah warna keycaps
+                            //{
+                            //    prefabArray[i].transform.GetChild(2).GetChild(j).GetComponent<MeshRenderer>().materials[k] = Resources.Load<Material>("Materials/" + loadedMaterials[2][j][k]);
+                            //}
                         }
                     }
-                    prefabArray[i].transform.GetChild(0).GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/" + loadedMaterials[3][0][0]); // 4. Masukkkan material case
-                    for (int l = 0; l < prefabArray[i].transform.GetChild(3).childCount; l++) // 5.1. For Length dari jumlah switch pada Keyboard
+                    //prefabArray[i].transform.GetChild(0).GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/" + loadedMaterials[3][0][0]); // 4. Masukkkan material case
+                    string[] new_case_color = loadedMaterials[3][0][0].Split(',');
+                    //prefabArray[i].transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color(float.Parse(new_case_color[0]), float.Parse(new_case_color[1]), float.Parse(new_case_color[2]), float.Parse(new_case_color[3]));
+                    prefab.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color(float.Parse(new_case_color[0]), float.Parse(new_case_color[1]), float.Parse(new_case_color[2]), float.Parse(new_case_color[3]));
+                    //Material caseColor = prefab.transform.GetChild(0).GetComponent<Renderer>().material;
+                    //caseColor = Resources.Load<Material>("Materials/" + loadedMaterials[3][0][0]);
+                    //prefab.transform.GetChild(0).GetComponent<MeshRenderer>().material = caseColor;
+                    for (int l = 0; l < prefab.transform.GetChild(3).childCount; l++) // 5.1. For Length dari jumlah switch pada Keyboard
                     {
-                        for (int m = 0; m < prefabArray[i].transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials.Length; m++) // 5.2. For Length dari jumlah warna pada switch
+                        //for (int m = 0; m < prefabArray[i].transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials.Length; m++) // 5.2. For Length dari jumlah warna pada switch
+                        for (int m = 0; m < prefab.transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials.Length; m++)
                         {
-                            prefabArray[i].transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials[m] = Resources.Load<Material>("Materials/" + loadedMaterials[4][l][m]);
+                            string[] new_color = loadedMaterials[4][l][m].Split(',');
+                            //prefabArray[i].transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials[m] = Resources.Load<Material>("Materials/" + loadedMaterials[4][l][m]);
+                            //prefabArray[i].transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials[m].color = new Color(float.Parse(new_color[0]), float.Parse(new_color[1]), float.Parse(new_color[2]), float.Parse(new_color[3]));
+                            prefab.transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials[m].color = new Color(float.Parse(new_color[0]), float.Parse(new_color[1]), float.Parse(new_color[2]), float.Parse(new_color[3]));
                         }
+                        //Material[] newColor = prefab.transform.GetChild(3).GetChild(l).GetComponent<Renderer>().materials;
+                        //newColor[0] = Resources.Load("Materials/" + loadedMaterials[4][l][0], typeof(Material)) as Material;
+                        //newColor[1] = Resources.Load("Materials/" + loadedMaterials[4][l][1], typeof(Material)) as Material;
+                        //newColor[2] = Resources.Load("Materials/" + loadedMaterials[4][l][2], typeof(Material)) as Material;
+
+                        //prefab.transform.GetChild(3).GetChild(l).GetComponent<MeshRenderer>().materials = newColor;
                     }
                 }
             }
+        }
     }
 
     #region Tes Save dan Load (BERHASIL)
@@ -269,19 +370,42 @@ public class MechKeyPrefab : MonoBehaviour {
         //        }
         //    }
         //}
-    }
+    //}
 #endregion
 
     void mechaFZ ()
     {
         checkMechaExist();
-        //Instantiate(prefabFullsize, keyboardSpawn.transform.position, keyboardSpawn.transform.rotation);
-        prefabFullsize.SetActive(true);
-        buttonFullsize.interactable = false;
-        buttonTKL.interactable = true;
-        button60.interactable = true;
-        prefabFullsize.transform.GetChild(1).gameObject.SetActive(true); // set Cherry Profile as Active
-        prefabFullsize.transform.GetChild(2).gameObject.SetActive(false); // set SA Profile as Not Active
+        GameObject prefab = Instantiate(prefabFullsize, keyboardSpawn.transform.position, keyboardSpawn.transform.rotation);
+        prefab.name = "Fullsize ANSI Keyboard";
+        prefab.SetActive(true);
+        prefab.transform.GetChild(2).gameObject.SetActive(false);
+        //prefabFullsize.SetActive(true);
+        ////buttonFullsize.interactable = false;
+        ////buttonTKL.interactable = true;
+        ////button60.interactable = true;
+        //prefabFullsize.transform.GetChild(1).gameObject.SetActive(true); // set Cherry Profile as Active
+        //prefabFullsize.transform.GetChild(2).gameObject.SetActive(false); // set SA Profile as Not Active
+
+        //GameObject[] activeKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
+
+        //for (int i = 0; i < prefabFullsize.transform.GetChild(1).childCount; i++)
+        //{
+        //    if (prefabFullsize.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length > 1)
+        //    {
+        //        for (int j = 0; j < prefabFullsize.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length; j++)
+        //        {
+        //            Debug.Log(prefabFullsize.transform.GetChild(1).GetChild(i).name);
+        //            prefabFullsize.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[0].color = Resources.Load<Material>("Materials/" + prefabFullsize.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[0].name).color;
+        //            prefabFullsize.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[1].color = Resources.Load<Material>("Materials/" + prefabFullsize.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[1].name).color;
+        //        }
+        //    }
+        //    else if (prefabFullsize.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length < 2)
+        //    {
+        //        prefabFullsize.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().material.color = Resources.Load<Material>("Materials/" + prefabFullsize.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().material.name).color;
+        //    }
+        //}
+
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
         GameObject.Find("Canvas").transform.GetChild(0).gameObject.SetActive(true);
@@ -303,13 +427,36 @@ public class MechKeyPrefab : MonoBehaviour {
     void mechaTKL ()
     {
         checkMechaExist();
-        //Instantiate(prefabTKL, keyboardSpawn.transform.position, keyboardSpawn.transform.rotation);
-        prefabTKL.SetActive(true);
-        buttonFullsize.interactable = true;
-        buttonTKL.interactable = false;
-        button60.interactable = true;
-        prefabTKL.transform.GetChild(1).gameObject.SetActive(true); // set Cherry Profile as Active
-        prefabTKL.transform.GetChild(2).gameObject.SetActive(false); // set SA Profile as Not Active
+        GameObject prefab = Instantiate(prefabTKL, keyboardSpawn.transform.position, keyboardSpawn.transform.rotation);
+        prefab.name = "Tenkeyless ANSI Keyboard";
+        prefab.SetActive(true);
+        prefab.transform.GetChild(2).gameObject.SetActive(false);
+        //prefabTKL.SetActive(true);
+        ////buttonFullsize.interactable = true;
+        ////buttonTKL.interactable = false;
+        ////button60.interactable = true;
+        //prefabTKL.transform.GetChild(1).gameObject.SetActive(true); // set Cherry Profile as Active
+        //prefabTKL.transform.GetChild(2).gameObject.SetActive(false); // set SA Profile as Not Active
+        //GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().alpha = 0f;
+        //GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
+        //GameObject.Find("Canvas").transform.GetChild(0).gameObject.SetActive(true);
+
+        //for (int i = 0; i < prefabTKL.transform.GetChild(1).childCount; i++)
+        //{
+        //    if (prefabTKL.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length > 1)
+        //    {
+        //        for (int j = 0; j < prefabTKL.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length; j++)
+        //        {
+        //            prefabTKL.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[0].color = Resources.Load<Material>("Materials/" + prefabTKL.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[0].name).color;
+        //            prefabTKL.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[1].color = Resources.Load<Material>("Materials/" + prefabTKL.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[1].name).color;
+        //        }
+        //    }
+        //    else if (prefabTKL.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length < 2)
+        //    {
+        //        prefabTKL.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().material.color = Resources.Load<Material>("Materials/" + prefabTKL.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().material.name).color;
+        //    }
+        //}
+
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
         GameObject.Find("Canvas").transform.GetChild(0).gameObject.SetActive(true);
@@ -331,13 +478,36 @@ public class MechKeyPrefab : MonoBehaviour {
     void mecha60 ()
     {
         checkMechaExist();
-        //Instantiate(prefab60, keyboardSpawn.transform.position, keyboardSpawn.transform.rotation);
-        prefab60.SetActive(true);
-        buttonFullsize.interactable = true;
-        buttonTKL.interactable = true;
-        button60.interactable = false;
-        prefab60.transform.GetChild(1).gameObject.SetActive(true); // set Cherry Profile as Active
-        prefab60.transform.GetChild(2).gameObject.SetActive(false); // set SA Profile as Not Active
+        GameObject prefab = Instantiate(prefab60, keyboardSpawn.transform.position, keyboardSpawn.transform.rotation);
+        prefab.name = "Compact ANSI Keyboard";
+        prefab.SetActive(true);
+        prefab.transform.GetChild(2).gameObject.SetActive(false);
+        //prefab60.SetActive(true);
+        ////buttonFullsize.interactable = true;
+        ////buttonTKL.interactable = true;
+        ////button60.interactable = false;
+        //prefab60.transform.GetChild(1).gameObject.SetActive(true); // set Cherry Profile as Active
+        //prefab60.transform.GetChild(2).gameObject.SetActive(false); // set SA Profile as Not Active
+        //GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().alpha = 0f;
+        //GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
+        //GameObject.Find("Canvas").transform.GetChild(0).gameObject.SetActive(true);
+
+        //for (int i = 0; i < prefab60.transform.GetChild(1).childCount; i++)
+        //{
+        //    if (prefab60.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length > 1)
+        //    {
+        //        for (int j = 0; j < prefab60.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length; j++)
+        //        {
+        //            prefab60.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[0].color = Resources.Load<Material>("Materials/" + prefab60.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[0].name).color;
+        //            prefab60.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[1].color = Resources.Load<Material>("Materials/" + prefab60.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[1].name).color;
+        //        }
+        //    }
+        //    else if (prefab60.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length < 2)
+        //    {
+        //        prefab60.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().material.color = Resources.Load<Material>("Materials/" + prefab60.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().material.name).color;
+        //    }
+        //}
+
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().alpha = 0f;
         GameObject.Find("Create Menu Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
         GameObject.Find("Canvas").transform.GetChild(0).gameObject.SetActive(true);
@@ -364,8 +534,8 @@ public class MechKeyPrefab : MonoBehaviour {
             return;
         foreach(GameObject mechKey in mechKeys)
         {
-            //Destroy(mechKey);
-            mechKey.SetActive(false);
+            Destroy(mechKey);
+            //mechKey.SetActive(false);
         }
     }
 }

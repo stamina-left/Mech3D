@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public class HideObject : MonoBehaviour
 {
-    public Canvas canvasFile, canvasCreate, canvasProperties, canvasColorPaletteSelection, canvasColorPalette, canvasSwitchesSelection;
+    public Canvas canvasFile, canvasCreate, canvasProperties, canvasColorPaletteSelection, canvasColorPalette, canvasSwitchesSelection, canvasSwitchesCP;
     public Button buttonFileProject, buttonChangeProfileKeycaps, buttonReverseColorKeycaps,
-        buttonSaveProject, buttonHideKeycaps, buttonHideSwitches, buttonChangeKeycapsColor, buttonChangeSwitches,
+        buttonSaveProject, buttonHideKeycaps, buttonHideSwitches, buttonChangeKeycapsColor, buttonChangeSwitches, buttonOpenMenuScreenshot,
         buttonCreate, buttonProperties, buttonCloseFile, buttonCloseCreate, buttonCloseProperties, buttonCloseChangeKeycapsColor,
-        buttonCloseColorPalette, buttonCloseChangeSwitches;
+        buttonCloseColorPalette, buttonCloseChangeSwitches, buttonCloseSwitchesColorPalette, buttonCloseToCanvas;
     private GameObject mechanicalKeyboards;
     private GameObject[] buttonCreateMenu, buttonPropertiesMenu;
     private Transform keycaps, switches;
@@ -38,6 +38,9 @@ public class HideObject : MonoBehaviour
         canvasSwitchesSelection.GetComponent<CanvasGroup>().alpha = 0f;
         canvasSwitchesSelection.GetComponent<CanvasGroup>().blocksRaycasts = false;
 
+        canvasSwitchesCP.GetComponent<CanvasGroup>().alpha = 0f;
+        canvasSwitchesCP.GetComponent<CanvasGroup>().blocksRaycasts = false;
+
         //canvasSaveLoadMenu.GetComponent<CanvasGroup>().alpha = 0f;
         //canvasSaveLoadMenu.GetComponent<CanvasGroup>().blocksRaycasts = false;
 
@@ -53,6 +56,7 @@ public class HideObject : MonoBehaviour
         buttonHideSwitches.onClick.AddListener(HideSwitches);
         buttonChangeKeycapsColor.onClick.AddListener(HidePropCKC);
         buttonChangeSwitches.onClick.AddListener(HidePropCS);
+        buttonOpenMenuScreenshot.onClick.AddListener(HideMenuCanvas);
 
         buttonCloseFile.onClick.AddListener(CloseFileMenu);
         buttonCloseCreate.onClick.AddListener(CloseCreateMenu);
@@ -60,6 +64,8 @@ public class HideObject : MonoBehaviour
         buttonCloseChangeKeycapsColor.onClick.AddListener(UnHidePropCKC);
         buttonCloseColorPalette.onClick.AddListener(UnHideCPSelect);
         buttonCloseChangeSwitches.onClick.AddListener(UnHidePropCS);
+        buttonCloseSwitchesColorPalette.onClick.AddListener(UnHideSwitchesBrand);
+        buttonCloseToCanvas.onClick.AddListener(UnHideMenuCanvas);
     }
 
     // Update is called once per frame
@@ -76,6 +82,11 @@ public class HideObject : MonoBehaviour
         buttonReverseColorKeycaps.gameObject.SetActive(false);
         canvasFile.GetComponent<CanvasGroup>().alpha = 1f;
         canvasFile.GetComponent<CanvasGroup>().blocksRaycasts = true;
+        //string material = "2D2E30";
+        //Debug.Log(Resources.Load("Materials/" + material, typeof(Material)) as Material); // muncul
+        //string newPath = "Materials/2D2E30";
+        //Debug.Log(Resources.Load(newPath, typeof(Material)) as Material); // muncul
+        //Debug.Log(Resources.Load("Materials/2D2E30", typeof(Material)) as Material); // muncul
     }
 
     void CloseFileMenu()
@@ -125,6 +136,8 @@ public class HideObject : MonoBehaviour
         buttonHideKeycaps.interactable = false;
         buttonHideSwitches.interactable = false;
         buttonChangeKeycapsColor.interactable = false;
+        buttonChangeSwitches.interactable = false;
+        buttonOpenMenuScreenshot.interactable = false;
 
         if (mechanicalKeyboards == null)
             return;
@@ -136,6 +149,8 @@ public class HideObject : MonoBehaviour
             buttonHideKeycaps.interactable = true;
             buttonHideSwitches.interactable = true;
             buttonChangeKeycapsColor.interactable = true;
+            buttonChangeSwitches.interactable = true;
+            buttonOpenMenuScreenshot.interactable = true;
         }
     }
 
@@ -248,19 +263,10 @@ public class HideObject : MonoBehaviour
         buttonHideSwitches.onClick.AddListener(HideSwitches);
     }
 
-    // kalau tidak ketemu, ambil dari variable keycaps parent
-    // 1. dicari dulu dari nama var, lalu diaktifkan
-    // 2. baru ambil material dsb
-
-    // 1. ambil material setiap keycap
-    // 2. nonaktifkan keycap saat ini
-    // 3. aktifkan keycap lawan
-    // 4. foreach
-    // 5. button icon diganti
-    public void ChangeKeycapProfile()
+    public void ChangeKeycapProfile() // Final Test
     {
         GameObject[] otherSelectedKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
-        foreach(GameObject otherSelectedKeycap in otherSelectedKeycaps)
+        foreach (GameObject otherSelectedKeycap in otherSelectedKeycaps)
         {
             Behaviour oskHalo = (Behaviour)otherSelectedKeycap.GetComponent("Halo");
             oskHalo.enabled = false;
@@ -275,89 +281,233 @@ public class HideObject : MonoBehaviour
             buttonHideKeycaps.onClick.AddListener(HideKeycaps);
         } // 1.5. Kalau misal keycaps yang mau dirubah, tersembunyi: buat btn HideKeycapsIcon kembali semula, lalu setactive true semua keycaps
 
-        GameObject[] targetKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
-        string keycapsProfile = GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name;
+        Material[][] keycapsMaterial = new Material[GameObject.FindGameObjectsWithTag("Keycaps").Length][];
 
-        Material[][] keyMats = new Material[targetKeycaps.Length][];
-        for (int i = 0; i < targetKeycaps.Length; i++)
+        for (int i = 0; i < GameObject.FindGameObjectsWithTag("Keycaps").Length; i++)
         {
-            keyMats[i] = new Material[targetKeycaps[i].GetComponent<MeshRenderer>().materials.Length];
-            for (int j = 0; j < keyMats[i].Length; j++)
-            {
-                keyMats[i][j] = targetKeycaps[i].GetComponent<MeshRenderer>().materials[j];
-            }
-        }
+            keycapsMaterial[i] = GameObject.Find(GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name).transform.GetChild(i).GetComponent<Renderer>().materials;
+            keycapsMaterial[i][0] = GameObject.Find(GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name).transform.GetChild(i).GetComponent<Renderer>().materials[0];
+            if (GameObject.Find(GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name).transform.GetChild(i).GetComponent<Renderer>().materials.Length > 1)
+                keycapsMaterial[i][1] = GameObject.Find(GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name).transform.GetChild(i).GetComponent<Renderer>().materials[1];
+        } // 2. Ambil material dari Keycaps saat ini
 
-
-        //GameObject[] keycapsMaterials = new GameObject[targetKeycaps.Length];
-        //for (int i = 0; i < targetKeycaps.Length; i++)
-        //{
-        //    keycapsMaterials[i] = targetKeycaps[i];
-        //}
-
-        if (keycapsProfile == "Cherry Keycaps")
+        if (GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name == "Cherry Keycaps")
         {
-            GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find(keycapsProfile).gameObject.SetActive(false);
-            GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find("SA Keycaps").gameObject.SetActive(true);
-            GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Change SA Keycap Profile Icon");
-        }
-        else if (keycapsProfile == "SA Keycaps")
+            GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).gameObject.SetActive(false);
+            GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).gameObject.SetActive(true);
+        } // 3.1. Pengecekan jika parent keycap adalah Cherry Keycaps
+
+        else if (GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name == "SA Keycaps")
         {
-            GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find(keycapsProfile).gameObject.SetActive(false);
-            GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find("Cherry Keycaps").gameObject.SetActive(true);
-            GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Change Cherry Keycap Profile Icon");
-        }
+            GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).gameObject.SetActive(true);
+            GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).gameObject.SetActive(false);
+        } // 3.2. Pengecekan jika parent keycap adalah SA Keycaps
 
-        GameObject[] newTargetKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
-        //for (int i = 0; i < newTargetKeycaps.Length; i++)
-        //{
-        //    //Debug.Log(keycapsMaterials[i].name); // JALAN
-        //    //if ((newTargetKeycaps[i].transform.position.x == keycapsMaterials[i].transform.position.x) && (newTargetKeycaps[i].transform.position.z == keycapsMaterials[i].transform.position.z))
-        //    //{
-        //    //    for (int j = 0; j < newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length; j++)
-        //    //    {
-        //    //        newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j] = keycapsMaterials[i].GetComponent<MeshRenderer>().materials[j];
-        //    //    }
-        //    //}
-        //    for (int j = 0; j < keycapsMaterials.Length; j++)
-        //    {
-        //        if ((newTargetKeycaps[i].transform.position.x != keycapsMaterials[i].transform.position.x) || (newTargetKeycaps[i].transform.position.z != keycapsMaterials[i].transform.position.z))
-        //            //Debug.LogError("Keycaps didn't match. " + keycapsMaterials[j].name);
-        //            return;
-        //        for (int k = 0; k < newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length; k++)
-        //            newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[k] = keycapsMaterials[j].GetComponent<MeshRenderer>().materials[k];
-        //    }
-        //}
-
-
-        for (int i = 0; i < newTargetKeycaps.Length; i++)
+        for (int i = 0; i < GameObject.FindGameObjectsWithTag("Keycaps").Length; i++)
         {
-            for (int j = 0; j < keyMats[i].Length; j++)
-            //for (int j = 0; j < keycapsMaterials.Length; j++)
-            {
-                //Debug.Log("I-" + i + " & J-" + j);
-                //Debug.Log(newTargetKeycaps[i].name + " & " + newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].name);
-                if (newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length < 2)
-                {
-                    newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].color = keyMats[i][j].color;
-                    j++;
-                }
-                else
-                    newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].color = keyMats[i][j].color; // Keycap Spacebar Error: Array index is out of range
-                //if ((newTargetKeycaps[i].transform.position.x == keycapsMaterials[j].transform.position.x) && (newTargetKeycaps[i].transform.position.z == keycapsMaterials[j].transform.position.z))
-                //{
-                //    for (int k = 0; k < newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length; k++)
-                //    {
-                //        newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[k] = keycapsMaterials[j].GetComponent<MeshRenderer>().materials[k];
-                //    }
-                //}
-                //else if ((newTargetKeycaps[i].transform.position.x != keycapsMaterials[j].transform.position.x) && (newTargetKeycaps[i].transform.position.z != keycapsMaterials[j].transform.position.z))
-                //{
-                //    j++;
-                //}
-            }
-        }
+            GameObject.Find(GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name).transform.GetChild(i).GetComponent<Renderer>().materials = keycapsMaterial[i];
+        } // 4. Taruh material dari keycaps sebelumnya ke keycaps saat ini
     }
+
+    //public void ChangeKeycapProfile() // test
+    //{
+    //GameObject[] otherSelectedKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+    //    foreach (GameObject otherSelectedKeycap in otherSelectedKeycaps)
+    //    {
+    //        Behaviour oskHalo = (Behaviour)otherSelectedKeycap.GetComponent("Halo");
+    //oskHalo.enabled = false;
+    //        otherSelectedKeycap.tag = "Keycaps";
+    //    } // 1. buat KeycapsSelected jadi Keycaps
+
+    //    if (GameObject.FindGameObjectWithTag("Keycaps") == null)
+    //    {
+    //        GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find(keycapsParent).gameObject.SetActive(true);
+    //        buttonHideKeycaps.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Hide Keycaps Icon");
+    //        buttonHideKeycaps.onClick.RemoveAllListeners();
+    //        buttonHideKeycaps.onClick.AddListener(HideKeycaps);
+    //    } // 1.5. Kalau misal keycaps yang mau dirubah, tersembunyi: buat btn HideKeycapsIcon kembali semula, lalu setactive true semua keycaps
+
+    //    string keycapsProfile = GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name;
+    //    if (keycapsProfile == "Cherry Keycaps")
+    //    {
+    //        GameObject[] currentMaterial = new GameObject[GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).childCount];
+    //        for (int i = 0; i < GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).childCount; i++)
+    //        {
+    //            for (int j = 0; j < GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<Renderer>().materials.Length; j++)
+    //            {
+    //                currentMaterial[i].GetComponent<Renderer>().materials[j] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<Renderer>().materials[j];
+    //            }
+    //        }
+    //        GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).gameObject.SetActive(false);
+    //        GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).gameObject.SetActive(true);
+    //        for (int i = 0; i < GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).childCount; i++)
+    //        {
+    //            for (int j = 0; j < GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).GetChild(i).GetComponent<Renderer>().materials.Length; j++)
+    //            {
+    //                GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).GetChild(i).GetComponent<Renderer>().materials[j] = currentMaterial[i].GetComponent<Renderer>().materials[j];
+    //            }
+    //        }
+    //    }
+    //    else if (keycapsProfile == "SA Keycaps")
+    //    {
+    //        GameObject[] currentMaterial = new GameObject[GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).childCount];
+    //        for (int i = 0; i < GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).childCount; i++)
+    //        {
+    //            for (int j = 0; j < GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).GetChild(i).GetComponent<Renderer>().materials.Length; j++)
+    //            {
+    //                currentMaterial[i].GetComponent<Renderer>().materials[j] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).GetChild(i).GetComponent<Renderer>().materials[j];
+    //            }
+    //        }
+    //        GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).gameObject.SetActive(true);
+    //        GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).gameObject.SetActive(false);
+    //        for (int i = 0; i < GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).childCount; i++)
+    //        {
+    //            for (int j = 0; j < GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<Renderer>().materials.Length; j++)
+    //            {
+    //                GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<Renderer>().materials[j] = currentMaterial[i].GetComponent<Renderer>().materials[j];
+    //            }
+    //        }
+    //    }
+    //}
+
+    // kalau tidak ketemu, ambil dari variable keycaps parent
+    // 1. dicari dulu dari nama var, lalu diaktifkan
+    // 2. baru ambil material dsb
+
+    // 1. ambil material setiap keycap
+    // 2. nonaktifkan keycap saat ini
+    // 3. aktifkan keycap lawan
+    // 4. foreach
+    // 5. button icon diganti
+    //public void ChangeKeycapProfile() // masih bug
+    //{
+    //GameObject[] otherSelectedKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+    //    foreach(GameObject otherSelectedKeycap in otherSelectedKeycaps)
+    //    {
+    //        Behaviour oskHalo = (Behaviour)otherSelectedKeycap.GetComponent("Halo");
+    //oskHalo.enabled = false;
+    //        otherSelectedKeycap.tag = "Keycaps";
+    //    } // 1. buat KeycapsSelected jadi Keycaps
+
+    //    if (GameObject.FindGameObjectWithTag("Keycaps") == null)
+    //    {
+    //        GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find(keycapsParent).gameObject.SetActive(true);
+    //        buttonHideKeycaps.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Hide Keycaps Icon");
+    //        buttonHideKeycaps.onClick.RemoveAllListeners();
+    //        buttonHideKeycaps.onClick.AddListener(HideKeycaps);
+    //    } // 1.5. Kalau misal keycaps yang mau dirubah, tersembunyi: buat btn HideKeycapsIcon kembali semula, lalu setactive true semua keycaps
+
+    //    GameObject[] targetKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
+    //    string keycapsProfile = GameObject.FindGameObjectWithTag("Keycaps").transform.parent.name;
+
+    //    //Material[][] keyMats = new Material[targetKeycaps.Length][];
+    //    string[][] keyMats = new string[targetKeycaps.Length][];
+    //    for (int i = 0; i < targetKeycaps.Length; i++)
+    //    {
+    //        //keyMats[i] = new Material[targetKeycaps[i].GetComponent<MeshRenderer>().materials.Length];
+    //        keyMats[i] = new string[targetKeycaps[i].GetComponent<MeshRenderer>().materials.Length];
+    //        if (keyMats[i].Length > 1)
+    //        {
+    //            for (int j = 0; j < keyMats[i].Length; j++)
+    //            {
+    //                keyMats[i][j] = targetKeycaps[i].GetComponent<MeshRenderer>().materials[j].color.ToString().Remove(targetKeycaps[i].GetComponent<MeshRenderer>().materials[j].color.ToString().Length - 1, 1).Remove(0, 5); ;
+    //            }
+    //        }
+    //        else if (keyMats[i].Length < 2)
+    //        {
+    //            keyMats[i][0] = targetKeycaps[i].GetComponent<MeshRenderer>().material.color.ToString().Remove(targetKeycaps[i].GetComponent<MeshRenderer>().material.color.ToString().Length - 1, 1).Remove(0, 5); ;
+    //        }
+    //        //for (int j = 0; j < keyMats[i].Length; j++)
+    //        //{
+    //        //    keyMats[i][j] = targetKeycaps[i].GetComponent<MeshRenderer>().materials[j];
+    //        //}
+    //    }
+
+
+    //    //GameObject[] keycapsMaterials = new GameObject[targetKeycaps.Length];
+    //    //for (int i = 0; i < targetKeycaps.Length; i++)
+    //    //{
+    //    //    keycapsMaterials[i] = targetKeycaps[i];
+    //    //}
+
+    //    if (keycapsProfile == "Cherry Keycaps")
+    //    {
+    //        GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find(keycapsProfile).gameObject.SetActive(false);
+    //        GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find("SA Keycaps").gameObject.SetActive(true);
+    //        GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Change SA Keycap Profile Icon");
+    //    }
+    //    else if (keycapsProfile == "SA Keycaps")
+    //    {
+    //        GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find(keycapsProfile).gameObject.SetActive(false);
+    //        GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.Find("Cherry Keycaps").gameObject.SetActive(true);
+    //        GameObject.Find("Canvas").transform.Find("Change Profile Keycap Button").gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icons/Change Cherry Keycap Profile Icon");
+    //    }
+
+    //    GameObject[] newTargetKeycaps = GameObject.FindGameObjectsWithTag("Keycaps");
+    //    //for (int i = 0; i < newTargetKeycaps.Length; i++)
+    //    //{
+    //    //    //Debug.Log(keycapsMaterials[i].name); // JALAN
+    //    //    //if ((newTargetKeycaps[i].transform.position.x == keycapsMaterials[i].transform.position.x) && (newTargetKeycaps[i].transform.position.z == keycapsMaterials[i].transform.position.z))
+    //    //    //{
+    //    //    //    for (int j = 0; j < newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length; j++)
+    //    //    //    {
+    //    //    //        newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j] = keycapsMaterials[i].GetComponent<MeshRenderer>().materials[j];
+    //    //    //    }
+    //    //    //}
+    //    //    for (int j = 0; j < keycapsMaterials.Length; j++)
+    //    //    {
+    //    //        if ((newTargetKeycaps[i].transform.position.x != keycapsMaterials[i].transform.position.x) || (newTargetKeycaps[i].transform.position.z != keycapsMaterials[i].transform.position.z))
+    //    //            //Debug.LogError("Keycaps didn't match. " + keycapsMaterials[j].name);
+    //    //            return;
+    //    //        for (int k = 0; k < newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length; k++)
+    //    //            newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[k] = keycapsMaterials[j].GetComponent<MeshRenderer>().materials[k];
+    //    //    }
+    //    //}
+
+
+    //    for (int i = 0; i < newTargetKeycaps.Length; i++)
+    //    {
+    //        if (newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length > 1)
+    //        {
+    //            for (int j = 0; j < newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length; j++)
+    //            {
+    //                Debug.Log(newTargetKeycaps[i].name);
+    //                Debug.Log(keyMats[i][j]); // bermasalah di shift_1 bagian cherry
+    //                string[] new_color = keyMats[i][j].Split(',');
+    //                newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].color = new Color(float.Parse(new_color[0]), float.Parse(new_color[1]), float.Parse(new_color[2]), float.Parse(new_color[3]));
+    //            }
+    //        }
+    //        else if (newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length == 1)
+    //        {
+    //            string[] new_color = keyMats[i][0].Split(',');
+    //            newTargetKeycaps[i].GetComponent<MeshRenderer>().material.color = new Color(float.Parse(new_color[0]), float.Parse(new_color[1]), float.Parse(new_color[2]), float.Parse(new_color[3]));
+    //        }
+    //        //for (int j = 0; j < keyMats[i].Length; j++)
+    //        ////for (int j = 0; j < keycapsMaterials.Length; j++)
+    //        //{
+    //        //    //Debug.Log("I-" + i + " & J-" + j);
+    //        //    //Debug.Log(newTargetKeycaps[i].name + " & " + newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].name);
+    //        //    //if (newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length < 2)
+    //        //    //{
+    //        //    //    newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].color = keyMats[i][j].color;
+    //        //    //    j++;
+    //        //    //}
+    //        //    //else
+    //        //    //    newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[j].color = keyMats[i][j].color; // Keycap Spacebar Error: Array index is out of range
+    //        //    //if ((newTargetKeycaps[i].transform.position.x == keycapsMaterials[j].transform.position.x) && (newTargetKeycaps[i].transform.position.z == keycapsMaterials[j].transform.position.z))
+    //        //    //{
+    //        //    //    for (int k = 0; k < newTargetKeycaps[i].GetComponent<MeshRenderer>().materials.Length; k++)
+    //        //    //    {
+    //        //    //        newTargetKeycaps[i].GetComponent<MeshRenderer>().materials[k] = keycapsMaterials[j].GetComponent<MeshRenderer>().materials[k];
+    //        //    //    }
+    //        //    //}
+    //        //    //else if ((newTargetKeycaps[i].transform.position.x != keycapsMaterials[j].transform.position.x) && (newTargetKeycaps[i].transform.position.z != keycapsMaterials[j].transform.position.z))
+    //        //    //{
+    //        //    //    j++;
+    //        //    //}
+    //        //}
+    //    }
+    //}
 
     void HidePropCKC()
     {
@@ -397,5 +547,41 @@ public class HideObject : MonoBehaviour
         canvasSwitchesSelection.GetComponent<CanvasGroup>().blocksRaycasts = false;
         canvasProperties.GetComponent<CanvasGroup>().alpha = 1f;
         canvasProperties.GetComponent<CanvasGroup>().blocksRaycasts = true;
+    }
+
+    void UnHideSwitchesBrand()
+    {
+        canvasSwitchesSelection.GetComponent<CanvasGroup>().alpha = 1f;
+        canvasSwitchesSelection.GetComponent<CanvasGroup>().blocksRaycasts = true;
+        canvasSwitchesCP.GetComponent<CanvasGroup>().alpha = 0f;
+        canvasSwitchesCP.GetComponent<CanvasGroup>().blocksRaycasts = false;
+    }
+
+    void HideMenuCanvas()
+    {
+        if (GameObject.FindGameObjectWithTag("KeycapsSelected"))
+        {
+            GameObject[] keycapsSelected = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+            foreach (GameObject keycapSelected in keycapsSelected)
+            {
+                Behaviour ksHalo = (Behaviour)keycapSelected.GetComponent("Halo");
+                ksHalo.enabled = false;
+                keycapSelected.tag = "Keycaps";
+            }
+        }
+
+        GameObject.Find("Canvas").GetComponent<CanvasGroup>().alpha = 0f;
+        GameObject.Find("Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
+
+        GameObject.Find("Screenshot Canvas").GetComponent<CanvasGroup>().alpha = 1f;
+        GameObject.Find("Screenshot Canvas").GetComponent<CanvasGroup>().blocksRaycasts = true;
+    }
+
+    void UnHideMenuCanvas()
+    {
+        GameObject.Find("Canvas").GetComponent<CanvasGroup>().alpha = 1f;
+        GameObject.Find("Canvas").GetComponent<CanvasGroup>().blocksRaycasts = true;
+        GameObject.Find("Screenshot Canvas").GetComponent<CanvasGroup>().alpha = 0f;
+        GameObject.Find("Screenshot Canvas").GetComponent<CanvasGroup>().blocksRaycasts = false;
     }
 }

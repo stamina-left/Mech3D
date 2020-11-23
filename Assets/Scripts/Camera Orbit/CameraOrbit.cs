@@ -37,6 +37,109 @@ public class CameraOrbit : MonoBehaviour {
             return;
         else if (GameObject.FindWithTag("MechanicalKeyboards") != null)
             target = GameObject.FindWithTag("MechanicalKeyboards").transform;
+
+        if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKey(KeyCode.A)) // SUKSES
+        {
+            Debug.Log("Control and Type A is clicked.");
+            if (GameObject.FindWithTag("Keycaps") || (GameObject.FindWithTag("Keycaps") && GameObject.FindWithTag("KeycapsSelected")))
+            {
+                GameObject[] otherKeycapsTarget = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+                foreach (GameObject otherKeycapTarget in otherKeycapsTarget)
+                {
+                    Behaviour oktHalo = (Behaviour)otherKeycapTarget.GetComponent("Halo");
+                    oktHalo.enabled = false;
+                    otherKeycapTarget.tag = "Keycaps";
+                }
+                GameObject[] keycapsTarget = GameObject.FindGameObjectsWithTag("Keycaps");
+                foreach (GameObject keycapTarget in keycapsTarget)
+                {
+                    Behaviour ktHalo = (Behaviour)keycapTarget.GetComponent("Halo");
+                    ktHalo.enabled = true;
+                    keycapTarget.tag = "KeycapsSelected";
+                }
+            }
+            else if (GameObject.FindWithTag("KeycapsSelected"))
+            {
+                GameObject[] keycapsSelectedTarget = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+                foreach (GameObject keycapSelectedTarget in keycapsSelectedTarget)
+                {
+                    Behaviour kstHalo = (Behaviour)keycapSelectedTarget.GetComponent("Halo");
+                    kstHalo.enabled = false;
+                    keycapSelectedTarget.tag = "Keycaps";
+                }
+                Debug.Log("No longer keycaps selected.");
+            }
+        }
+        
+        else if ((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) && Input.GetMouseButtonDown(0)) // ON PROGRESS
+        {
+            Debug.Log("Left mouse button and control button is clicked.");
+
+            RaycastHit hitInfo = new RaycastHit();
+            bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
+            
+            if (hit && hitInfo.transform.tag == "Keycaps")
+            {
+                Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
+                hitInfo.transform.tag = "KeycapsSelected";
+                hitHalo.GetType().GetProperty("enabled").SetValue(hitHalo, true, null);
+            }
+            else if (hit && hitInfo.transform.tag == "KeycapsSelected")
+            {
+                Debug.Log(hitInfo.transform.tag);
+                Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
+                hitInfo.transform.tag = "Keycaps";
+                hitHalo.GetType().GetProperty("enabled").SetValue(hitHalo, false, null);
+            }
+            else
+            {
+                Debug.Log("You didn't touch anything.");
+            }
+        }
+        else if (Input.GetMouseButtonDown(0))
+        {
+            Debug.Log("Left mouse button is clicked.");
+
+            RaycastHit hitInfo = new RaycastHit();
+            bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
+            
+            if (hit && hitInfo.transform.tag == "Keycaps")
+            {
+                GameObject[] otherKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+                foreach (GameObject otherKeycap in otherKeycaps)
+                {
+                    Debug.Log("Keycaps lain yang terpilih, sudah tidak terpilih lagi.");
+                    Behaviour otherHalo = (Behaviour)otherKeycap.GetComponent("Halo");
+                    otherHalo.enabled = false;
+                    otherKeycap.tag = "Keycaps";
+                }
+
+                Debug.Log("You just clicked " + hitInfo.transform.name);
+                Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
+                hitInfo.transform.tag = "KeycapsSelected";
+                hitHalo.GetType().GetProperty("enabled").SetValue(hitHalo, true, null);
+            }
+            else if (hit && hitInfo.transform.tag == "KeycapsSelected")
+            {
+                GameObject[] otherKeycaps = GameObject.FindGameObjectsWithTag("KeycapsSelected");
+                foreach (GameObject otherKeycap in otherKeycaps)
+                {
+                    Debug.Log("Keycaps lain yang terpilih, sudah tidak terpilih lagi.");
+                    Behaviour otherHalo = (Behaviour)otherKeycap.GetComponent("Halo");
+                    otherHalo.enabled = false;
+                    otherKeycap.tag = "Keycaps";
+                }
+
+                Debug.Log("You just clicked " + hitInfo.transform.name);
+                Behaviour hitHalo = (Behaviour)GameObject.Find(hitInfo.transform.name).GetComponent("Halo");
+                hitInfo.transform.tag = "Keycaps";
+                hitHalo.GetType().GetProperty("enabled").SetValue(hitHalo, false, null);
+            }
+            else if (!hit)
+            {
+                Debug.Log("You didn't touch anything.");
+            }
+        }
     }
 
     void LateUpdate()

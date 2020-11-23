@@ -22240,7 +22240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keyboardName: 
   keycapsProfile: 
-  caseMaterial: {fileID: 0}
+  caseMaterial: (
 --- !u!122 &122005307333546566
 Halo:
   m_ObjectHideFlags: 1

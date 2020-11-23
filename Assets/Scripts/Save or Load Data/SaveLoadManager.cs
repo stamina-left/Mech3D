@@ -14,11 +14,11 @@ public class SaveLoadManager : MonoBehaviour
         public static void SaveProject(MechanicalKeyboard mechanicalKeyboard, string filepath)
         {
             BinaryFormatter bf = new BinaryFormatter();
-        //FileStream stream = new FileStream(Application.persistentDataPath + "/" + projectName + ".sav", FileMode.Create);
-        //FileStream stream = new FileStream(Application.persistentDataPath + "/MechanicalKeyboard.sav", FileMode.Create);
-        FileStream stream = new FileStream(filepath, FileMode.Create);
+            //FileStream stream = new FileStream(Application.persistentDataPath + "/" + projectName + ".sav", FileMode.Create);
+            //FileStream stream = new FileStream(Application.persistentDataPath + "/MechanicalKeyboard.sav", FileMode.Create);
+            FileStream stream = new FileStream(filepath, FileMode.Create);
 
-        MechanicalKeyboardData data = new MechanicalKeyboardData(mechanicalKeyboard);
+            MechanicalKeyboardData data = new MechanicalKeyboardData(mechanicalKeyboard);
 
             //int keySwitch = int.Parse(mechanicalKeyboard.checkLayout().ToString());
 
@@ -88,10 +88,12 @@ public class SaveLoadManager : MonoBehaviour
 
     public static string[][][] LoadProject(string filepath)
     {
-        if (File.Exists(Application.persistentDataPath + "/MechanicalKeyboard.sav"))
+        //if (File.Exists(Application.persistentDataPath + "/MechanicalKeyboard.sav"))
+        if (File.Exists(filepath))
         {
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream stream = new FileStream(Application.persistentDataPath + "/MechanicalKeyboard.sav", FileMode.Open);
+            //FileStream stream = new FileStream(Application.persistentDataPath + "/MechanicalKeyboard.sav", FileMode.Open);
+            FileStream stream = new FileStream(filepath, FileMode.Open);
 
             MechanicalKeyboardData data = bf.Deserialize(stream) as MechanicalKeyboardData;
 
@@ -145,7 +147,8 @@ public class MechanicalKeyboardData
             {
                 materials[i] = new string[1][];
                 materials[i][0] = new string[1];
-                materials[i][0][0] = mechanicalKeyboard.caseMaterial.name;
+                //materials[i][0][0] = mechanicalKeyboard.caseMaterial.name;
+                materials[i][0][0] = mechanicalKeyboard.caseMaterial;
             }
 
             //else if (i == 0 || i == 2)
@@ -166,7 +169,8 @@ public class MechanicalKeyboardData
                         materials[i][j] = new string[mechanicalKeyboard.keycapsMaterial[j].Length];
                         for (int k = 0; k < mechanicalKeyboard.keycapsMaterial[j].Length; k++)
                         {
-                            materials[i][j][k] = mechanicalKeyboard.keycapsMaterial[j][k].name;
+                            //materials[i][j][k] = mechanicalKeyboard.keycapsMaterial[j][k].name;
+                            materials[i][j][k] = mechanicalKeyboard.keycapsMaterial[j][k];
                         }
                     }
                 }
@@ -179,7 +183,8 @@ public class MechanicalKeyboardData
                         materials[i][j] = new string[mechanicalKeyboard.switchesMaterial[j].Length];
                         for (int k = 0; k < mechanicalKeyboard.switchesMaterial[j].Length; k++)
                         {
-                            materials[i][j][k] = mechanicalKeyboard.switchesMaterial[j][k].name;
+                            //materials[i][j][k] = mechanicalKeyboard.switchesMaterial[j][k].name;
+                            materials[i][j][k] = mechanicalKeyboard.switchesMaterial[j][k];
                         }
                     }
                 }

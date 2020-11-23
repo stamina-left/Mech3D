@@ -207,66 +207,112 @@ public class MechanicalKeyboard : MonoBehaviour {
     #region New Custom Binary Files
 
     public string keyboardName, keycapsProfile;
-    public Material caseMaterial;
-    public Material[][] keycapsMaterial, switchesMaterial;
+    //public Material caseMaterial;
+    public string caseMaterial;
+    //public Material[][] keycapsMaterial, switchesMaterial;
+    public string[][] keycapsMaterial, switchesMaterial;
 
     private void Update()
     {
-        keyboardName = this.name;
+        //keyboardName = this.name;
+        keyboardName = GameObject.FindGameObjectWithTag("MechanicalKeyboards").name;
         //Debug.Log(keyboardName);
 
-        caseMaterial = this.transform.GetChild(0).GetComponent<MeshRenderer>().material;
+        //caseMaterial = this.transform.GetChild(0).GetComponent<MeshRenderer>().material;
+        caseMaterial = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(0).GetComponent<MeshRenderer>().material.color.ToString().Remove(GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(0).GetComponent<MeshRenderer>().material.color.ToString().Length - 1, 1).Remove(0, 5);
+        //caseMaterial = this.transform.GetChild(0).GetComponent<MeshRenderer>().material.name;
         //Debug.Log(caseMaterial);
 
         //if (this.transform.Find("Cherry Keycaps").gameObject.activeInHierarchy == true)
-        if (this.transform.Find("Cherry Keycaps").gameObject.activeSelf && !this.transform.Find("SA Keycaps").gameObject.activeSelf)
+        //if ((this.transform.Find("Cherry Keycaps").gameObject.activeInHierarchy) && !(this.transform.Find("SA Keycaps").gameObject.activeInHierarchy)) // BUG
+        if ((GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).gameObject.activeInHierarchy) && !(GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).gameObject.activeInHierarchy))
         {
             //Debug.Log("Cherry Keycaps is Activated");
-            keycapsProfile = this.transform.GetChild(1).name;
-            keycapsMaterial = new Material[this.transform.GetChild(1).childCount][];
-            for (int i = 0; i < this.transform.GetChild(1).childCount; i++)
+            //keycapsProfile = this.transform.GetChild(1).name;
+            keycapsProfile = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).name;
+            //keycapsMaterial = new Material[this.transform.GetChild(1).childCount][];
+            keycapsMaterial = new string[GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).childCount][];
+            //for (int i = 0; i < this.transform.GetChild(1).childCount; i++)
+            for (int i = 0; i < GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).childCount; i++)
             {
                 //Debug.Log("I: " + i + " Keycaps Length: " + keycapsMaterial.Length); // JALAN
                 //Debug.Log("I: " + i + " Materials length: " + this.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length); // JALAN
-                keycapsMaterial[i] = new Material[this.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length];
-                for (int j = 0; j < this.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length; j++)
+                //keycapsMaterial[i] = new Material[this.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length];
+                keycapsMaterial[i] = new string[GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length];
+                //for (int j = 0; j < this.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials.Length; j++)
+                //{
+                //    //Debug.Log(this.transform.GetChild(1).GetChild(i).name);
+                //    keycapsMaterial[i][j] = this.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[j]; // ERROR: Array index is out of range
+                //    //Debug.Log("I: " + i + " & J: " + j + " & Material: " + keycapsMaterial[i][j]);
+                //    //Debug.Log(keycapsMaterial[i].Length); // JALAN
+                //    //Debug.Log("j: " + j + " " + this.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[j]); // Result: null
+                //}
+                if (keycapsMaterial[i].Length > 1)
                 {
-                    //Debug.Log(this.transform.GetChild(1).GetChild(i).name);
-                    keycapsMaterial[i][j] = this.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[j]; // ERROR: Array index is out of range
-                    //Debug.Log("I: " + i + " & J: " + j + " & Material: " + keycapsMaterial[i][j]);
-                    //Debug.Log(keycapsMaterial[i].Length); // JALAN
-                    //Debug.Log("j: " + j + " " + this.transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[j]); // Result: null
+                    keycapsMaterial[i][0] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[0].color.ToString().Remove(GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[0].color.ToString().Length - 1, 1).Remove(0, 5);
+                    keycapsMaterial[i][1] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[1].color.ToString().Remove(GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[1].color.ToString().Length - 1, 1).Remove(0, 5);
+                    //keycapsMaterial[i][0] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[0].name;
+                    //keycapsMaterial[i][1] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[1].name;
+                }
+                else if (keycapsMaterial[i].Length < 2)
+                {
+                    keycapsMaterial[i][0] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().material.color.ToString().Remove(GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().material.color.ToString().Length - 1, 1).Remove(0, 5);
+                    //keycapsMaterial[i][0] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().material.name;
                 }
             }
             //Debug.Log(keycapsMaterial[0][0]); // TIDAK ERROR
         }
 
         //else if (this.transform.Find("SA Keycaps").gameObject.activeInHierarchy == true)
-        else if (!this.transform.Find("Cherry Keycaps").gameObject.activeSelf && this.transform.Find("SA Keycaps").gameObject.activeSelf)
+        //else if (!(this.transform.Find("Cherry Keycaps").gameObject.activeInHierarchy) && (this.transform.Find("SA Keycaps").gameObject.activeInHierarchy))
+        else if ((GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).gameObject.activeInHierarchy) && !(GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).gameObject.activeInHierarchy))
         {
             //Debug.Log("SA Keycaps is Activated");
-            keycapsProfile = this.transform.GetChild(2).name;
-            keycapsMaterial = new Material[this.transform.GetChild(2).childCount][];
-            for (int i = 0; i < this.transform.GetChild(2).childCount; i++)
+            //keycapsProfile = this.transform.GetChild(2).name;
+            //keycapsMaterial = new Material[this.transform.GetChild(2).childCount][];
+            keycapsProfile = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).name;
+            keycapsMaterial = new string[GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).childCount][];
+            //for (int i = 0; i < this.transform.GetChild(2).childCount; i++)
+            //{
+            //    keycapsMaterial[i] = new Material[this.transform.GetChild(2).GetChild(i).GetComponent<MeshRenderer>().materials.Length];
+            //    for (int j = 0; j < this.transform.GetChild(2).GetChild(i).GetComponent<MeshRenderer>().materials.Length; j++)
+            //    {
+            //        keycapsMaterial[i][j] = this.transform.GetChild(2).GetChild(i).GetComponent<MeshRenderer>().materials[j];
+            //    }
+            //}
+            //Debug.Log(keycapsMaterial[1].Length);
+            for (int i = 0; i < GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).childCount; i++)
             {
-                keycapsMaterial[i] = new Material[this.transform.GetChild(2).GetChild(i).GetComponent<MeshRenderer>().materials.Length];
-                for (int j = 0; j < this.transform.GetChild(2).GetChild(i).GetComponent<MeshRenderer>().materials.Length; j++)
+                keycapsMaterial[i] = new string[GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).GetChild(i).GetComponent<MeshRenderer>().materials.Length];
+                if (keycapsMaterial[i].Length > 1)
                 {
-                    keycapsMaterial[i][j] = this.transform.GetChild(2).GetChild(i).GetComponent<MeshRenderer>().materials[j];
+                    keycapsMaterial[i][0] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).GetChild(i).GetComponent<MeshRenderer>().materials[0].color.ToString().Remove(GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).GetChild(i).GetComponent<MeshRenderer>().materials[0].color.ToString().Length - 1, 1).Remove(0, 5);
+                    keycapsMaterial[i][1] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).GetChild(i).GetComponent<MeshRenderer>().materials[1].color.ToString().Remove(GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).GetChild(i).GetComponent<MeshRenderer>().materials[1].color.ToString().Length - 1, 1).Remove(0, 5);
+                    //keycapsMaterial[i][0] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[0].name;
+                    //keycapsMaterial[i][1] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().materials[1].name;
+                }
+                else if (keycapsMaterial[i].Length < 2)
+                {
+                    keycapsMaterial[i][0] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(2).GetChild(i).GetComponent<MeshRenderer>().material.color.ToString().Remove(GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().material.color.ToString().Length - 1, 1).Remove(0, 5);
+                    //keycapsMaterial[i][0] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(1).GetChild(i).GetComponent<MeshRenderer>().material.name;
                 }
             }
-            //Debug.Log(keycapsMaterial[1].Length);
         }
 
-        switchesMaterial = new Material[this.transform.GetChild(3).childCount][];
+        //switchesMaterial = new Material[this.transform.GetChild(3).childCount][];
+        switchesMaterial = new string[GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(3).childCount][];
         //Debug.Log(switchesMaterial.Length); // JALAN
         for (int i = 0; i < this.transform.GetChild(3).childCount; i++)
         {
             //Debug.Log(this.transform.GetChild(3).GetChild(i).GetComponent<MeshRenderer>().materials.Length); // JALAN
-            switchesMaterial[i] = new Material[this.transform.GetChild(3).GetChild(i).GetComponent<MeshRenderer>().materials.Length];
-            for (int j = 0; j < this.transform.GetChild(3).GetChild(i).GetComponent<MeshRenderer>().materials.Length; j++)
+            //switchesMaterial[i] = new Material[this.transform.GetChild(3).GetChild(i).GetComponent<MeshRenderer>().materials.Length];
+            switchesMaterial[i] = new string[GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(3).GetChild(i).GetComponent<MeshRenderer>().materials.Length];
+            //for (int j = 0; j < this.transform.GetChild(3).GetChild(i).GetComponent<MeshRenderer>().materials.Length; j++)
+            for (int j = 0; j < GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(3).GetChild(i).GetComponent<MeshRenderer>().materials.Length; j++)
             {
-                switchesMaterial[i][j] = this.transform.GetChild(3).GetChild(i).GetComponent<MeshRenderer>().materials[j];
+                //switchesMaterial[i][j] = this.transform.GetChild(3).GetChild(i).GetComponent<MeshRenderer>().materials[j];
+                switchesMaterial[i][j] = GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(3).GetChild(i).GetComponent<MeshRenderer>().materials[j].color.ToString().Remove(GameObject.FindGameObjectWithTag("MechanicalKeyboards").transform.GetChild(3).GetChild(i).GetComponent<MeshRenderer>().materials[j].color.ToString().Length - 1, 1).Remove(0, 5);
+                //switchesMaterial[i][j] = this.transform.GetChild(3).GetChild(i).GetComponent<MeshRenderer>().materials[j].name;
                 //Debug.Log("I: " + i + " & J: " + j + " & Switches Name: " + switchesMaterial[i][j].name); // JALAN
             }
         }

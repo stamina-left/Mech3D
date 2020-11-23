@@ -4586,7 +4586,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1784757100258806
 GameObject:
   m_ObjectHideFlags: 1
@@ -26541,7 +26541,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keyboardName: 
   keycapsProfile: 
-  caseMaterial: {fileID: 0}
+  caseMaterial: (
 --- !u!122 &122013289769840888
 Halo:
   m_ObjectHideFlags: 1
